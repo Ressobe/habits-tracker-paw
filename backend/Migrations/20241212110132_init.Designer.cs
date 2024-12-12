@@ -11,8 +11,8 @@ using api.Data;
 
 namespace api.Migrations
 {
-    [DbContext(typeof(AplicationDbContext))]
-    [Migration("20241212102013_init")]
+    [DbContext(typeof(ApplicationDBContext))]
+    [Migration("20241212110132_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -53,13 +53,13 @@ namespace api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "97f50c97-4752-4cde-954a-25da5c66952a",
+                            Id = "80fd8dec-766d-4727-a09b-2fad50a2fcd9",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "54ca1425-b94c-4ea7-a088-713325376d07",
+                            Id = "ad9809c1-483a-4e14-8efa-d9407405d0ec",
                             Name = "User",
                             NormalizedName = "USER"
                         });

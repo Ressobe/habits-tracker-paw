@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using api.Interfaces;
 using System.Security.Claims;
+using backend.Dtos.Account;
 
 namespace api.Controllers
 {
@@ -30,6 +31,9 @@ namespace api.Controllers
         /// <param name="registerDto"></param>
         /// <returns></returns>
         [HttpPost("register")]
+        [ProducesResponseType(typeof(NewUserDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
             try{
@@ -79,6 +83,9 @@ namespace api.Controllers
         /// <param name="loginDto"></param>
         /// <returns></returns>
         [HttpPost("login")]
+        [ProducesResponseType(typeof(NewUserDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
             if (!ModelState.IsValid) {
@@ -104,14 +111,48 @@ namespace api.Controllers
                 }
             );
         }
+        /// <summary>
+        /// Get user info
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("me")]
+        [Authorize]
+        [ProducesResponseType(typeof(GetMeDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetMe()
+        {
+            var username = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(username)) {
+                return Unauthorized("User not authenticated");
+            }
+
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName.ToLower() == username.ToLower());
+            if (user is null) {
+                return Unauthorized("Invalid username!");
+            }
+            return Ok(
+                new GetMeDto
+                {
+                    Username = user.UserName,
+                    Email = user.Email,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                }
+            );
+        }
+
 
         /// <summary>
         /// Change user password
         /// </summary>
         /// <param name="changePasswordDto"></param>
         /// <returns></returns>
-        [HttpPut("changepassword")]
+        [HttpPut("change-password")]
         [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
         {
             if (!ModelState.IsValid) {
@@ -142,6 +183,36 @@ namespace api.Controllers
             else {
                 return StatusCode(500, changePasswordResult.Errors);
             }
+        }
+        /// <summary>
+        /// Updates user's first and last name
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPut("update-names")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdateNames([FromBody] UpdateNamesDto updateNamesDto)
+        {
+            if (!ModelState.IsValid) {
+                return BadRequest(ModelState);
+            }
+
+            var username = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(username)) {
+                return Unauthorized("User not authenticated");
+            }
+
+            var user = await _userManager.FindByNameAsync(username);
+
+            user.FirstName = updateNamesDto.FirstName;
+            user.LastName = updateNamesDto.LastName;
+
+            await _userManager.UpdateAsync(user);
+            return Ok("Account updated successfully");
         }
     }
 }

@@ -50,7 +50,7 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 {
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
 });
-builder.Services.AddDbContext<AplicationDbContext>(options =>
+builder.Services.AddDbContext<ApplicationDBContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")
 ));
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
@@ -59,7 +59,7 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
     options.Password.RequireLowercase = true;
     options.Password.RequiredLength = 5;
 })
-.AddEntityFrameworkStores<AplicationDbContext>();
+.AddEntityFrameworkStores<ApplicationDBContext>();
 
 builder.Services.AddAuthentication(options => {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
