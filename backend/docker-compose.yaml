@@ -1,0 +1,12 @@
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: habitstracker
+      POSTGRES_PASSWORD: habitstracker
+      POSTGRES_DB: HabitsTracker
+    ports:
+      - 5469:5432
+    volumes:
+     - ./init.sql:/docker-entrypoint-initdb.d/init.sql
