@@ -166,8 +166,8 @@ namespace api.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "54ca1425-b94c-4ea7-a088-713325376d07", null, "User", "USER" },
-                    { "97f50c97-4752-4cde-954a-25da5c66952a", null, "Admin", "ADMIN" }
+                    { "80fd8dec-766d-4727-a09b-2fad50a2fcd9", null, "Admin", "ADMIN" },
+                    { "ad9809c1-483a-4e14-8efa-d9407405d0ec", null, "User", "USER" }
                 });
 
             migrationBuilder.CreateIndex(
