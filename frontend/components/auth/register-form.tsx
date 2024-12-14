@@ -17,19 +17,19 @@ import { Button } from "@/components/ui/button";
 import { CardWrapper } from "@/components/auth/card-wrapper";
 import { Register, registerSchema } from "@/types/auth";
 import { registerAction } from "@/actions/register";
+import { ActionReponse } from "@/types/server";
+import { redirect } from "next/navigation";
 
 export function RegisterForm() {
-  const form = useForm<
-    Register & { sucessMessage: string; errorMessage: string }
-  >({
+  const form = useForm<Register & ActionReponse>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       email: "",
       name: "",
+      firstName: "",
+      lastName: "",
       confirmPassword: "",
       password: "",
-      sucessMessage: "",
-      errorMessage: "",
     },
   });
   const { isSubmitting } = useFormState({
@@ -39,15 +39,16 @@ export function RegisterForm() {
   const onSubmit = async (values: Register) => {
     const response = await registerAction(values);
 
-    // if (response.success) {
-    //   form.setValue("sucessMessage", "sucess");
-    //   form.setValue("errorMessage", "");
-    // }
-    //
-    // if (response.error) {
-    //   form.setValue("errorMessage", "error");
-    //   form.setValue("sucessMessage", "");
-    // }
+    if (response.success) {
+      form.setValue("sucessMessage", response.success);
+      form.setValue("errorMessage", "");
+      redirect("/");
+    }
+
+    if (response.error) {
+      form.setValue("errorMessage", response.error);
+      form.setValue("sucessMessage", "");
+    }
   };
 
   return (
@@ -82,12 +83,48 @@ export function RegisterForm() {
               name="name"
               render={({ field }) => (
                 <FormItem className="text-sm md:text-lg">
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>Username</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       disabled={isSubmitting}
-                      placeholder="john"
+                      placeholder="Username"
+                      type="text"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="firstName"
+              render={({ field }) => (
+                <FormItem className="text-sm md:text-lg">
+                  <FormLabel>First name</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      disabled={isSubmitting}
+                      placeholder="John"
+                      type="text"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="lastName"
+              render={({ field }) => (
+                <FormItem className="text-sm md:text-lg">
+                  <FormLabel>Last name</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      disabled={isSubmitting}
+                      placeholder="Nowak"
                       type="text"
                     />
                   </FormControl>

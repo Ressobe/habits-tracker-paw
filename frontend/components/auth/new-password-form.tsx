@@ -11,61 +11,63 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { CardWrapper } from "@/components/auth/card-wrapper";
-import { Login, loginSchema } from "@/types/auth";
 import { Button } from "@/components/ui/button";
-import { FormSucess } from "@/components/auth/form-sucess";
+import { CardWrapper } from "@/components/auth/card-wrapper";
 import { FormError } from "@/components/auth/form-error";
+import { FormSucess } from "@/components/auth/form-sucess";
+import { NewPassword, newPasswordSchema } from "@/types/auth";
 import { ActionReponse } from "@/types/server";
-import { loginAction } from "@/actions/login";
-import { redirect } from "next/navigation";
 
-export function LoginForm() {
-  const form = useForm<Login & ActionReponse>({
-    resolver: zodResolver(loginSchema),
+export function NewPasswordForm() {
+  const form = useForm<NewPassword & ActionReponse>({
+    resolver: zodResolver(newPasswordSchema),
     defaultValues: {
-      username: "",
       password: "",
+      confirmPassword: "",
+
+      sucessMessage: "",
+      errorMessage: "",
     },
   });
   const { isSubmitting } = useFormState({
     control: form.control,
   });
 
-  const onSubmit = async (values: Login) => {
-    const response = await loginAction(values);
-    if (response.success) {
-      form.setValue("sucessMessage", response.success);
-      form.setValue("errorMessage", "");
-      redirect("/");
-    }
+  const onSubmit = async (values: NewPassword) => {
+    console.log(values);
 
-    if (response.error) {
-      form.setValue("errorMessage", response.error);
-      form.setValue("sucessMessage", "");
-    }
+    // if (response.success) {
+    //   form.setValue("sucessMessage", "sucess");
+    //   form.setValue("errorMessage", "");
+    // }
+    //
+    // if (response.error) {
+    //   form.setValue("errorMessage", "error");
+    //   form.setValue("sucessMessage", "");
+    // }
   };
 
   return (
     <CardWrapper
-      headerLabel="Welcome back"
-      backButtonLabel="Don't have an account?"
-      backButtonHref="/auth/register"
+      headerLabel="Enter new password"
+      backButtonLabel="Back to login"
+      backButtonHref="/auth/login"
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-4">
             <FormField
-              name="username"
+              control={form.control}
+              name="password"
               render={({ field }) => (
-                <FormItem className="text-sm md:text-lg">
-                  <FormLabel>Username</FormLabel>
+                <FormItem>
+                  <FormLabel>New password</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       disabled={isSubmitting}
-                      placeholder="Username"
-                      type="text"
+                      placeholder="********"
+                      type="password"
                     />
                   </FormControl>
                   <FormMessage />
@@ -73,16 +75,17 @@ export function LoginForm() {
               )}
             />
             <FormField
-              name="password"
+              control={form.control}
+              name="confirmPassword"
               render={({ field }) => (
-                <FormItem className="text-sm md:text-lg">
-                  <FormLabel>Password</FormLabel>
+                <FormItem>
+                  <FormLabel>New password confirm</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       disabled={isSubmitting}
-                      type="password"
                       placeholder="********"
+                      type="password"
                     />
                   </FormControl>
                   <FormMessage />
@@ -90,15 +93,15 @@ export function LoginForm() {
               )}
             />
           </div>
-          <FormError message={form.getValues("errorMessage")} />
-          <FormSucess message={form.getValues("sucessMessage")} />
+          <FormError message={error} />
+          <FormSucess message={sucess} />
           <Button
             variant="secondary"
             type="submit"
-            className="w-full rounded-lg relative"
+            className="w-full"
             disabled={isSubmitting}
           >
-            Login
+            Reset password
           </Button>
         </form>
       </Form>
