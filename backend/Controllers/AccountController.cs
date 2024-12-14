@@ -58,8 +58,6 @@ namespace api.Controllers
                                 UserName = appUser.UserName,
                                 Email = appUser.Email,
                                 Token = _tokenService.CreateToken(appUser),
-                                FirstName = appUser.FirstName,
-                                LastName = appUser.LastName
                             }
                         );
                     }
