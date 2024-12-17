@@ -39,6 +39,9 @@ export type Register = z.infer<typeof registerSchema>;
 
 export const newPasswordSchema = z
   .object({
+    oldPassword: z.string().min(8, {
+      message: "Minimum 8 characters required",
+    }),
     password: z.string().min(8, {
       message: "Minimum 8 characters required",
     }),
