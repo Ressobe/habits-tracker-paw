@@ -1,8 +1,9 @@
 using System.Reflection;
-using api.Data;
-using api.Interfaces;
-using api.Models;
-using api.Services;
+using backend.Data;
+using backend.Interfaces;
+using backend.Models;
+using backend.Services;
+using backend.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -85,6 +86,9 @@ builder.Services.AddAuthentication(options => {
 
 
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IHabitsService, HabitsService>();
+
+builder.Services.AddScoped<IHabitsRepository, HabitsRepository>();
 
 var app = builder.Build();
 

@@ -1,23 +1,30 @@
-using api.Models;
+using backend.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace api.Data
+namespace backend.Data
 {
     public class ApplicationDBContext : IdentityDbContext<AppUser>
     {
         public ApplicationDBContext(DbContextOptions dbContextOptions) : base(dbContextOptions)
         {
-            
         }
+        public DbSet<Habit> Habits { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            List<IdentityRole> roles = new List<IdentityRole>
-            {
+            builder.Entity<Habit>(x => x.HasKey(h => new { h.Id }));
+
+            builder.Entity<Habit>()
+                .HasOne(u => u.CreatedBy)
+                .WithMany(h => h.Habits)
+                .HasForeignKey(h => h.CreatedById);
+
+            List<IdentityRole> roles =
+            [
                 new IdentityRole
                 {
                     Name = "Admin",
@@ -28,7 +35,7 @@ namespace api.Data
                     Name = "User",
                     NormalizedName = "USER"
                 },
-            };
+            ];
             builder.Entity<IdentityRole>().HasData(roles);
         }
     }

@@ -1,14 +1,14 @@
-using api.Models;
+using backend.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using api.Dtos.Account;
+using backend.Dtos.Account;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
-using api.Interfaces;
+using backend.Interfaces;
 using System.Security.Claims;
-using backend.Dtos.Account;
+using backend.Filters;
 
-namespace api.Controllers
+namespace backend.Controllers
 {
     [Microsoft.AspNetCore.Components.Route("api/account")]
     [ApiController]
@@ -92,7 +92,7 @@ namespace api.Controllers
             var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName.ToLower() == loginDto.Username.ToLower());
 
             if (user is null) {
-                return Unauthorized("Invalid username!");
+                return Unauthorized("Username not found or password incorrect");
             }
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
 
@@ -115,18 +115,19 @@ namespace api.Controllers
         /// <returns></returns>
         [HttpGet("me")]
         [Authorize]
+        [AuthorizeUser]
         [ProducesResponseType(typeof(GetMeDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetMe()
         {
-            var username = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(username)) {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId)) {
                 return Unauthorized("User not authenticated");
             }
 
-            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName.ToLower() == username.ToLower());
+            var user = await _userManager.FindByIdAsync(userId);
             if (user is null) {
-                return Unauthorized("Invalid username!");
+                return Unauthorized("Invalid user!");
             }
             return Ok(
                 new GetMeDto
@@ -147,6 +148,7 @@ namespace api.Controllers
         /// <returns></returns>
         [HttpPut("change-password")]
         [Authorize]
+        [AuthorizeUser]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -156,13 +158,9 @@ namespace api.Controllers
             if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }
+            var userId = HttpContext.Items["UserId"] as string;
 
-            var username = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            if (string.IsNullOrEmpty(username)) {
-                return Unauthorized("User not authenticated");
-            }
-            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName.ToLower() == username.ToLower());
+            var user = await _userManager.FindByIdAsync(userId);
 
             if (user is null) {
                 return Unauthorized("Invalid username!");
@@ -189,6 +187,7 @@ namespace api.Controllers
         /// <returns></returns>
         [HttpPut("update-names")]
         [Authorize]
+        [AuthorizeUser]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -198,13 +197,12 @@ namespace api.Controllers
             if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }
+            var userId = HttpContext.Items["UserId"] as string;
 
-            var username = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(username)) {
-                return Unauthorized("User not authenticated");
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user is null) {
+                return Unauthorized("Invalid user!");
             }
-
-            var user = await _userManager.FindByNameAsync(username);
 
             user.FirstName = updateNamesDto.FirstName;
             user.LastName = updateNamesDto.LastName;

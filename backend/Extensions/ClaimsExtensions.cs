@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
-namespace api.Extensions
+namespace backend.Extensions
 {
     public static class ClaimsExtensions
     {

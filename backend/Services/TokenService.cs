@@ -1,15 +1,12 @@
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using api.Interfaces;
-using api.Models;
+using backend.Interfaces;
+using backend.Models;
 using Microsoft.IdentityModel.Tokens;
 
-namespace api.Services
+namespace backend.Services
 {
     public class TokenService : ITokenService
     {
@@ -26,7 +23,8 @@ namespace api.Services
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(ClaimTypes.NameIdentifier, user.UserName)
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Name, user.UserName)
             };
 
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
@@ -34,7 +32,7 @@ namespace api.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddDays(7),
+                Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = creds,
                 Issuer = _config["JWT:Issuer"],
                 Audience = _config["JWT:Audience"]

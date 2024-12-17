@@ -1,14 +1,12 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace api.Dtos.Account
+namespace backend.Dtos.Account
 {
     public class RegisterDto
     {
         [Required]
+        [MinLength(5, ErrorMessage = "username must be at least 5 characters")]
+        [MaxLength(30, ErrorMessage = "username must be at most 30 characters")]
         public string Username { get; set; } = string.Empty;
         [Required]
         [EmailAddress]
