@@ -13,6 +13,7 @@ import { ActionReponse } from "@/types/server";
 import { UpdateUser, updateUserSchema } from "@/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFormState } from "react-hook-form";
+import { Button } from "@/components/ui/button";
 
 type EditUserFormProps = {
   defaultValues: UpdateUser;
@@ -76,6 +77,12 @@ export function EditUserForm({ defaultValues }: EditUserFormProps) {
               </FormItem>
             )}
           />
+        </div>
+        <div className="flex justify-end">
+          <div className="flex gap-2">
+            <Button variant="outline">Cancel</Button>
+            <Button type="submit">Update</Button>
+          </div>
         </div>
       </form>
     </Form>
