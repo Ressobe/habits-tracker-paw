@@ -1,18 +1,12 @@
+import { FilterDropdownMenu } from "@/components/filter-dropdown-menu";
 import { SearchBar } from "@/components/search-bar";
-import { Button } from "@/components/ui/button";
+import { SettingsDialog } from "@/components/settings-dialog";
 import { Card, CardContent } from "@/components/ui/card";
+import { CategoryDialog } from "@/modules/categories/components/category-dialog";
 import { HabitCalendar } from "@/modules/habits/components/habit-calendar";
 import { HabitItem } from "@/modules/habits/components/habit-item";
 import { HabitSheet } from "@/modules/habits/components/habit-sheet";
-import {
-  ArrowRight,
-  Book,
-  Bookmark,
-  Check,
-  Flame,
-  Settings,
-  X,
-} from "lucide-react";
+import { ArrowRight, Book, Check, Flame, X } from "lucide-react";
 
 export default function Home() {
   return (
@@ -26,22 +20,20 @@ export default function Home() {
         </div>
         <div className="flex items-center gap-2">
           <HabitSheet />
-          <Button variant="outline">
-            <Bookmark />
-            Category
-          </Button>
-          <Button variant="outline">
-            <Settings /> Settings
-          </Button>
+          <CategoryDialog />
+          <SettingsDialog />
         </div>
       </div>
       <div className="flex w-full gap-16">
-        <ul className="space-y-6 w-1/3">
-          <SearchBar />
-          <HabitItem name="Exercise" />
-          <HabitItem name="Journal" selected />
-          <HabitItem name="Cold shower" />
-          <HabitItem name="Meditate" />
+        <ul className="space-y-6">
+          <div className="flex items-center justify-between gap-4">
+            <SearchBar />
+            <FilterDropdownMenu />
+          </div>
+          <HabitItem name="Exercise" categoryName="Health" />
+          <HabitItem name="Journal" categoryName="Mind" selected />
+          <HabitItem name="Cold shower" categoryName="Health" />
+          <HabitItem name="Meditate" categoryName="Mind" />
         </ul>
         <div className="flex flex-col w-full gap-8">
           <div className="grid grid-cols-2 gap-4 ">
