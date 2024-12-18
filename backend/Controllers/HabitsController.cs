@@ -55,6 +55,7 @@ public class HabitsController : ControllerBase
   [ProducesResponseType(typeof(HabitDto), StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status400BadRequest)]
   [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+  [ProducesResponseType(StatusCodes.Status404NotFound)]
   [ProducesResponseType(StatusCodes.Status500InternalServerError)]
   public async Task<IActionResult> GetById([FromRoute] Guid id)
   {
@@ -69,8 +70,93 @@ public class HabitsController : ControllerBase
     catch (HabitNotFoundException ex) {
       return NotFound(new { message = ex.Message });
     }
-    catch (Exception ex)
-    {
+    catch (Exception ex) {
+      return StatusCode(500, ex.Message);
+    }
+  }
+
+  /// <summary>
+  /// Get all habits created by user
+  /// </summary>
+  /// <returns></returns>
+  [HttpGet]
+  [AuthorizeUser]
+  [ProducesResponseType(typeof(List<HabitDto>), StatusCodes.Status200OK)]
+  [ProducesResponseType(StatusCodes.Status400BadRequest)]
+  [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+  [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+  public async Task<IActionResult> GetAll()
+  {
+    if (!ModelState.IsValid) {
+      return BadRequest(ModelState);
+    }
+    var userId = HttpContext.Items["UserId"] as string;
+    try {
+      var habits = await _habitsService.GetAllHabitsByUserIdAsync(userId);
+      return Ok(habits);
+    }
+    catch (Exception ex) {
+      return StatusCode(500, ex.Message);
+    }
+  }
+
+  /// <summary>
+  /// Update habit by id
+  /// </summary>
+  /// <param name="id"></param>
+  /// <param name="updateHabitDto"></param>
+  /// <returns></returns>
+  [HttpPut("{id:guid}")]
+  [AuthorizeUser]
+  [ProducesResponseType(typeof(Guid),StatusCodes.Status200OK)]
+  [ProducesResponseType(StatusCodes.Status400BadRequest)]
+  [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+  [ProducesResponseType(StatusCodes.Status404NotFound)]
+  [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+  public async Task<IActionResult> UpdateHabit([FromRoute] Guid id, [FromBody] UpdateHabitDto updateHabitDto)
+  {
+    if (!ModelState.IsValid) {
+      return BadRequest(ModelState);
+    }
+    var userId = HttpContext.Items["UserId"] as string;
+    try {
+      await _habitsService.UpdateHabitAsync(id, updateHabitDto, userId);
+      return Ok("Habit updated successfully");
+    }
+    catch (HabitNotFoundException ex) {
+      return NotFound(new { message = ex.Message });
+    }
+    catch (Exception ex) {
+      return StatusCode(500, ex.Message);
+    }
+  }
+
+  /// <summary>
+  /// Delete habit by id
+  /// </summary>
+  /// <param name="id"></param>
+  /// <returns></returns>
+  [HttpDelete("{id:guid}")]
+  [AuthorizeUser]
+  [ProducesResponseType(StatusCodes.Status204NoContent)]
+  [ProducesResponseType(StatusCodes.Status400BadRequest)]
+  [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+  [ProducesResponseType(StatusCodes.Status404NotFound)]
+  [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+  public async Task<IActionResult> DeleteHabit([FromRoute] Guid id)
+  {
+    if (!ModelState.IsValid) {
+      return BadRequest(ModelState);
+    }
+    var userId = HttpContext.Items["UserId"] as string;
+    try {
+      await _habitsService.DeleteHabitByIdAsync(id, userId);
+      return NoContent();
+    }
+    catch (HabitNotFoundException ex) {
+      return NotFound(new { message = ex.Message });
+    }
+    catch (Exception ex) {
       return StatusCode(500, ex.Message);
     }
   }

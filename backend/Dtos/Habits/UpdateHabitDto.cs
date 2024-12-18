@@ -1,8 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace backend.Dtos.Habits;
-
-public class CreateHabitDto
+public class UpdateHabitDto
 {
   [Required]
   [MinLength(3, ErrorMessage = "name must be at least 3 characters")]
