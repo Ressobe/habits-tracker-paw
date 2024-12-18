@@ -54,9 +54,23 @@ public class HabitsService : IHabitsService
     if (habit is null) {
       throw new HabitNotFoundException("Habit not found");
     }
-    habit.Name = updateHabitDto.Name;
-    habit.Description = updateHabitDto.Description;
-    habit.Priority = updateHabitDto.Priority;
+    int countChanges = 0;
+    if (updateHabitDto.Name is not null) {
+      habit.Name = updateHabitDto.Name;
+      countChanges++;
+    }
+    if (updateHabitDto.Description is not null) {
+      habit.Description = updateHabitDto.Description;
+      countChanges++;
+    }
+    if (updateHabitDto.Priority is not null) {
+      habit.Priority = (int)updateHabitDto.Priority;
+      countChanges++;
+    }
+
+    if (countChanges == 0) {
+      throw new NothingToUpdateException("Nothing to update. Stop sending requests!");
+    }
 
     await _habitRepo.UpdateAsync(habit);
 
