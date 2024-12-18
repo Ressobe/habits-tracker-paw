@@ -14,4 +14,15 @@ public static class HabitsMapper
       Priority = createHabitDto.Priority
     };
   }
+  public static HabitDto ToHabitDto(this Habit habit)
+  {
+    return new HabitDto
+    {
+      Id = habit.Id,
+      Name = habit.Name,
+      Description = habit.Description,
+      Priority = habit.Priority,
+      CreatedAt = habit.CreatedAt
+    };
+  }
 }

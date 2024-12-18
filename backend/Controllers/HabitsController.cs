@@ -1,4 +1,5 @@
 using backend.Dtos.Habits;
+using backend.Exceptions;
 using backend.Filters;
 using backend.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -36,7 +37,37 @@ public class HabitsController : ControllerBase
     var userId = HttpContext.Items["UserId"] as string;
     try {
       var createdHabitId = await _habitsService.CreateHabitAsync(createHabitDto, userId);
-      return CreatedAtAction(nameof(CreateHabit), new { id = createdHabitId }, null);
+      return CreatedAtAction(nameof(CreateHabit), new { id = createdHabitId }, createdHabitId);
+    }
+    catch (Exception ex)
+    {
+      return StatusCode(500, ex.Message);
+    }
+  }
+
+  /// <summary>
+  /// Get habit by id
+  /// </summary>
+  /// <param name="id"></param>
+  /// <returns></returns>
+  [HttpGet("{id:guid}")]
+  [AuthorizeUser]
+  [ProducesResponseType(typeof(HabitDto), StatusCodes.Status200OK)]
+  [ProducesResponseType(StatusCodes.Status400BadRequest)]
+  [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+  [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+  public async Task<IActionResult> GetById([FromRoute] Guid id)
+  {
+    if (!ModelState.IsValid) {
+      return BadRequest(ModelState);
+    }
+    var userId = HttpContext.Items["UserId"] as string;
+    try {
+      var habit = await _habitsService.GetHabitByIdAsync(id, userId);
+      return Ok(habit);
+    }
+    catch (HabitNotFoundException ex) {
+      return NotFound(new { message = ex.Message });
     }
     catch (Exception ex)
     {
