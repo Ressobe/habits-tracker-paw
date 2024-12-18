@@ -161,13 +161,35 @@ namespace api.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Habits",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    Priority = table.Column<int>(type: "integer", nullable: false),
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Habits", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Habits_AspNetUsers_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "80fd8dec-766d-4727-a09b-2fad50a2fcd9", null, "Admin", "ADMIN" },
-                    { "ad9809c1-483a-4e14-8efa-d9407405d0ec", null, "User", "USER" }
+                    { "aea246ce-cdfc-4bf3-9b15-0f30e8b9d704", null, "Admin", "ADMIN" },
+                    { "dd11e176-a0fa-43e6-8a97-d19e827171d8", null, "User", "USER" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -206,6 +228,11 @@ namespace api.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Habits_CreatedById",
+                table: "Habits",
+                column: "CreatedById");
         }
 
         /// <inheritdoc />
@@ -225,6 +252,9 @@ namespace api.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Habits");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

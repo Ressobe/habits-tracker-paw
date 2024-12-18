@@ -1,5 +1,5 @@
 
-namespace api.Dtos.Account;
+namespace backend.Dtos.Account;
 
 public class GetMeDto
 {

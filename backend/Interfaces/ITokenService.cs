@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using api.Models;
+using backend.Models;
 
-namespace api.Interfaces
+namespace backend.Interfaces
 {
     public interface ITokenService
     {
