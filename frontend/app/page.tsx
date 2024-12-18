@@ -1,31 +1,34 @@
+import { getUserInfo } from "@/api/user/get-user-info";
+import { LogoutButton } from "@/components/auth/logout-button";
 import { Completed } from "@/components/completed";
 import { CurrentStreak } from "@/components/current-streak";
 import { Failed } from "@/components/failed";
 import { FilterDropdownMenu } from "@/components/filter-dropdown-menu";
+import { HelloMessage } from "@/components/hello-message";
 import { SearchBar } from "@/components/search-bar";
 import { SettingsDialog } from "@/components/settings-dialog";
 import { Skiped } from "@/components/skiped";
 import { Total } from "@/components/total";
-import { Card, CardContent } from "@/components/ui/card";
 import { CategoryDialog } from "@/modules/categories/components/category-dialog";
 import { HabitCalendar } from "@/modules/habits/components/habit-calendar";
 import { HabitItem } from "@/modules/habits/components/habit-item";
 import { HabitSheet } from "@/modules/habits/components/habit-sheet";
+import { Suspense } from "react";
 
-export default function Home() {
+export default async function Home() {
+  const { data } = await getUserInfo();
+
   return (
     <section className="w-full flex flex-col gap-8 justify-center p-8">
       <div className="flex justify-between">
-        <div className="flex flex-col">
-          <h1 className="text-4xl font-bold">Hello Bartek</h1>
-          <span className="text-muted-foreground text-sm">
-            Checkout your todays habits
-          </span>
-        </div>
+        <Suspense>
+          <HelloMessage name={data?.firstName ?? ""} />
+        </Suspense>
         <div className="flex items-center gap-2">
           <HabitSheet />
           <CategoryDialog />
           <SettingsDialog />
+          <LogoutButton />
         </div>
       </div>
       <div className="flex w-full gap-16">
