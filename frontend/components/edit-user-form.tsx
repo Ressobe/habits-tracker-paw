@@ -14,12 +14,22 @@ import { UpdateUser, updateUserSchema } from "@/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFormState } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import { updateUserAction } from "@/actions/update-user";
+import { useToast } from "@/hooks/use-toast";
+import { SucessToastMessage } from "./sucess-toast-message";
+import { ErrorToastMessage } from "./error-toast-message";
 
 type EditUserFormProps = {
   defaultValues: UpdateUser;
+  onSuccess?: () => void;
+  onError?: () => void;
 };
 
-export function EditUserForm({ defaultValues }: EditUserFormProps) {
+export function EditUserForm({
+  defaultValues,
+  onSuccess,
+  onError,
+}: EditUserFormProps) {
   const form = useForm<UpdateUser & ActionReponse>({
     resolver: zodResolver(updateUserSchema),
     defaultValues: {
@@ -28,12 +38,30 @@ export function EditUserForm({ defaultValues }: EditUserFormProps) {
     },
   });
 
+  const { toast } = useToast();
+
   const { isSubmitting } = useFormState({
     control: form.control,
   });
 
-  const onSubmit = (values: UpdateUser) => {
-    console.log(values);
+  const onSubmit = async (values: UpdateUser) => {
+    const response = await updateUserAction(values);
+    if (response.success) {
+      toast({
+        description: <SucessToastMessage message={response.success} />,
+        className: "bg-secondary opacity-90",
+        duration: 2000,
+      });
+      onSuccess?.();
+    }
+    if (response.error) {
+      toast({
+        description: <ErrorToastMessage message={response.error} />,
+        className: "bg-secondary opacity-90",
+        duration: 2000,
+      });
+      onError?.();
+    }
   };
 
   return (
