@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -10,10 +12,13 @@ import {
 import { Plus } from "lucide-react";
 import { HabitForm } from "./habit-form";
 import { Separator } from "@/components/ui/separator";
+import { useState } from "react";
 
 export function HabitSheet() {
+  const [opened, setOpened] = useState(false);
+
   return (
-    <Sheet>
+    <Sheet open={opened} onOpenChange={setOpened}>
       <SheetTrigger asChild>
         <Button className="flex items-center" variant="outline">
           <Plus />
@@ -28,7 +33,7 @@ export function HabitSheet() {
           </SheetDescription>
         </SheetHeader>
         <Separator />
-        <HabitForm />
+        <HabitForm onSuccess={() => setOpened(false)} />
       </SheetContent>
     </Sheet>
   );

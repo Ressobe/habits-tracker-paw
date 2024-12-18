@@ -11,7 +11,6 @@ import { CategoryDialog } from "@/modules/categories/components/category-dialog"
 import { HabitCalendar } from "@/modules/habits/components/habit-calendar";
 import { HabitItem } from "@/modules/habits/components/habit-item";
 import { HabitSheet } from "@/modules/habits/components/habit-sheet";
-import { ArrowRight, Check, Flame, NotepadText, X } from "lucide-react";
 
 export default function Home() {
   return (

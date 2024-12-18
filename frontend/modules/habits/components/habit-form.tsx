@@ -2,8 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -22,41 +20,58 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { NewHabit, newHabitSchema } from "@/types/habit";
+import { createHabitAction } from "../actions/create-habit";
+import { ErrorToastMessage } from "@/components/error-toast-message";
+import { useToast } from "@/hooks/use-toast";
+import { SucessToastMessage } from "@/components/sucess-toast-message";
 
-const FormSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-});
+type HabitFormProps = {
+  onSuccess?: () => void;
+  onError?: () => void;
+};
 
-export function HabitForm() {
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+export function HabitForm({ onSuccess, onError }: HabitFormProps) {
+  const form = useForm<NewHabit>({
+    resolver: zodResolver(newHabitSchema),
     defaultValues: {
-      username: "",
+      name: "",
+      description: "",
+      priority: 1,
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
-  }
+  const { toast } = useToast();
+
+  const onSubmit = async (values: NewHabit) => {
+    const response = await createHabitAction(values);
+    if (response.sucess) {
+      toast({
+        description: <SucessToastMessage message={response.sucess} />,
+        className: "bg-secondary opacity-90",
+        duration: 2000,
+      });
+      onSuccess?.();
+    }
+    if (response.error) {
+      toast({
+        description: <ErrorToastMessage message={response.error} />,
+        className: "bg-secondary opacity-90",
+        duration: 2000,
+      });
+      onError?.();
+    }
+  };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
         <FormField
           control={form.control}
-          name="username"
+          name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Habit Name</FormLabel>
+              <FormLabel>Habit name</FormLabel>
               <FormControl>
                 <Input placeholder="Exercise" {...field} />
               </FormControl>
@@ -66,18 +81,49 @@ export function HabitForm() {
           )}
         />
 
-        <Select>
-          <SelectTrigger className="">
-            <SelectValue placeholder="Repeat" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="light">Weekly</SelectItem>
-            <SelectItem value="dark">Every day</SelectItem>
-            <SelectItem value="system">Monthly</SelectItem>
-          </SelectContent>
-        </Select>
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Description</FormLabel>
+              <FormControl>
+                <Input placeholder="Description" {...field} />
+              </FormControl>
+              <FormDescription>Description for your new habit</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-        <Button type="submit">Add habit</Button>
+        <FormField
+          control={form.control}
+          name="priority"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Priority</FormLabel>
+              <Select
+                onValueChange={field.onChange}
+                defaultValue={`${field.value}`}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a priority for your habit" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="1">LOW</SelectItem>
+                  <SelectItem value="2">MEDIUM</SelectItem>
+                  <SelectItem value="3">HIGH</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="flex justify-end">
+          <Button type="submit">Add habit</Button>
+        </div>
       </form>
     </Form>
   );
