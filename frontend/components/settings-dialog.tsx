@@ -13,6 +13,8 @@ import { EditUserForm } from "./edit-user-form";
 import { Separator } from "@/components/ui/separator";
 import { UpdatePasswordForm } from "./update-password-form";
 import { EditCategoryForm } from "@/modules/categories/components/edit-category-form";
+import { CategoryItem } from "@/modules/categories/components/category-item";
+import { ScrollArea } from "./ui/scroll-area";
 
 export function SettingsDialog() {
   return (
@@ -22,17 +24,19 @@ export function SettingsDialog() {
           <Settings /> Settings
         </Button>
       </DialogTrigger>
-      <DialogContent className="h-[350px]">
-        <DialogHeader>
+      <DialogContent className="h-[450px] flex flex-col">
+        <DialogHeader className="h-fit">
           <DialogTitle>Settings</DialogTitle>
           <DialogDescription>Settings for your account</DialogDescription>
         </DialogHeader>
-        <Separator />
         <Tabs
           defaultValue="account"
-          className="flex items-start justify-start gap-12"
+          className="h-full flex items-start justify-start gap-12"
         >
-          <TabsList className="flex flex-col items-start bg-white w-fit">
+          <TabsList
+            aria-orientation="vertical"
+            className="h-fit flex flex-col items-start justify-start bg-white w-fit"
+          >
             <TabsTrigger value="account" className="w-full">
               Account
             </TabsTrigger>
@@ -43,7 +47,13 @@ export function SettingsDialog() {
               Categories
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="account" className="w-full">
+          <TabsContent value="account" className="w-full h-full">
+            <div className="pb-4">
+              <h2 className="font-bold text-md">Edit your account</h2>
+              <span className="text-muted-foreground text-sm">
+                Change your first name and last name
+              </span>
+            </div>
             <EditUserForm
               defaultValues={{
                 lastName: "Sobina",
@@ -52,16 +62,47 @@ export function SettingsDialog() {
             />
           </TabsContent>
           <TabsContent value="password" className="w-full">
+            <div className="pb-4">
+              <h2 className="font-bold text-md">Update your password</h2>
+              <span className="text-muted-foreground text-sm">
+                Type your old password and change it
+              </span>
+            </div>
             <UpdatePasswordForm />
           </TabsContent>
           <TabsContent value="categories">
-            <h2 className="font-bold text-lg py-4">Your categories</h2>
-            <EditCategoryForm
-              category={{
-                id: "djjdj",
-                name: "Category1",
-              }}
-            />
+            <h2 className="font-bold text-lg pb-4">Your categories</h2>
+            <ScrollArea className="h-80">
+              <ul className="flex flex-col gap-6">
+                <CategoryItem
+                  category={{ id: "dkdk", name: "CategoryItem1" }}
+                />
+                <CategoryItem
+                  category={{ id: "dkdk", name: "CategoryItem2" }}
+                />
+                <CategoryItem
+                  category={{ id: "dkdk", name: "CategoryItem3" }}
+                />
+                <CategoryItem
+                  category={{ id: "dkdk", name: "CategoryItem4" }}
+                />
+                <CategoryItem
+                  category={{ id: "dkdk", name: "CategoryItem4" }}
+                />
+                <CategoryItem
+                  category={{ id: "dkdk", name: "CategoryItem4" }}
+                />
+                <CategoryItem
+                  category={{ id: "dkdk", name: "CategoryItem4" }}
+                />
+                <CategoryItem
+                  category={{ id: "dkdk", name: "CategoryItem4" }}
+                />
+                <CategoryItem
+                  category={{ id: "dkdk", name: "CategoryItem4" }}
+                />
+              </ul>
+            </ScrollArea>
           </TabsContent>
         </Tabs>
       </DialogContent>

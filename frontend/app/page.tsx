@@ -1,12 +1,17 @@
+import { Completed } from "@/components/completed";
+import { CurrentStreak } from "@/components/current-streak";
+import { Failed } from "@/components/failed";
 import { FilterDropdownMenu } from "@/components/filter-dropdown-menu";
 import { SearchBar } from "@/components/search-bar";
 import { SettingsDialog } from "@/components/settings-dialog";
+import { Skiped } from "@/components/skiped";
+import { Total } from "@/components/total";
 import { Card, CardContent } from "@/components/ui/card";
 import { CategoryDialog } from "@/modules/categories/components/category-dialog";
 import { HabitCalendar } from "@/modules/habits/components/habit-calendar";
 import { HabitItem } from "@/modules/habits/components/habit-item";
 import { HabitSheet } from "@/modules/habits/components/habit-sheet";
-import { ArrowRight, Book, Check, Flame, X } from "lucide-react";
+import { ArrowRight, Check, Flame, NotepadText, X } from "lucide-react";
 
 export default function Home() {
   return (
@@ -37,87 +42,17 @@ export default function Home() {
         </ul>
         <div className="flex flex-col w-full gap-8">
           <div className="grid grid-cols-2 gap-4 ">
-            <CurrentStreak />
-            <Completed />
+            <CurrentStreak amountOfDays={40} />
+            <Completed amountOfDays={40} />
           </div>
           <div className="grid grid-cols-3 gap-4">
-            <Failed />
-            <Skiped />
-            <Total />
+            <Failed amountOfDays={40} />
+            <Skiped amountOfDays={40} />
+            <Total amountOfDays={80} />
           </div>
           <HabitCalendar />
         </div>
       </div>
     </section>
-  );
-}
-
-function CurrentStreak() {
-  return (
-    <Card className="h-min">
-      <CardContent className="flex items-center p-10 gap-4">
-        <Flame className="w-14 h-14" />
-        <div className="flex flex-col">
-          <span>Current Streak</span>
-          <span>7 days</span>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-function Completed() {
-  return (
-    <Card>
-      <CardContent className="flex items-center p-10 gap-4">
-        <Check className="w-14 h-14 text-green-500" />
-        <div className="flex flex-col">
-          <span>Completed</span>
-          <span>40 days</span>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-function Skiped() {
-  return (
-    <Card>
-      <CardContent className="flex items-center p-10 gap-4">
-        <ArrowRight className="w-14 h-14" />
-        <div className="flex flex-col">
-          <span>Skiped</span>
-          <span>40 days</span>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-function Failed() {
-  return (
-    <Card>
-      <CardContent className="flex items-center p-10 gap-4">
-        <X className="w-14 h-14 text-red-500" />
-        <div className="flex flex-col">
-          <span>Failed</span>
-          <span>40 days</span>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-function Total() {
-  return (
-    <Card>
-      <CardContent className="flex items-center p-10 gap-4">
-        <Book className="w-14 h-14" />
-        <div className="flex flex-col">
-          <span>Total</span>
-          <span>80 days</span>
-        </div>
-      </CardContent>
-    </Card>
   );
 }
