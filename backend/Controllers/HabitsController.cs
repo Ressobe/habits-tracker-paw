@@ -121,7 +121,7 @@ public class HabitsController : ControllerBase
     var userId = HttpContext.Items["UserId"] as string;
     try {
       await _habitsService.UpdateHabitAsync(id, updateHabitDto, userId);
-      return Ok("Habit updated successfully");
+      return Ok(new { message = "Habit updated successfully" });
     }
     catch (HabitNotFoundException ex) {
       return NotFound(new { message = ex.Message });
