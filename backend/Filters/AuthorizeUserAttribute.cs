@@ -10,7 +10,7 @@ public class AuthorizeUserAttribute : ActionFilterAttribute
   {
     var userId = context.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-    if (string.IsNullOrEmpty(userId)) {
+    if (string.IsNullOrWhiteSpace(userId)) {
       context.Result = new UnauthorizedObjectResult("User not authenticated");
       return;
     }

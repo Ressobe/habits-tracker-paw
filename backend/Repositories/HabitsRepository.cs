@@ -22,4 +22,11 @@ public class HabitsRepository(ApplicationDBContext context) : IHabitsRepository
       .Where(x => x.CreatedById == userId)
       .FirstOrDefaultAsync(h => h.Id == id);
   }
+
+  public async Task<Guid> UpdateAsync(Habit habit)
+  {
+    _context.Entry(habit).State = EntityState.Modified;
+    await _context.SaveChangesAsync();
+    return habit.Id;
+  }
 }

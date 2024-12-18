@@ -10,7 +10,7 @@ using backend.Filters;
 
 namespace backend.Controllers
 {
-    [Microsoft.AspNetCore.Components.Route("api/account")]
+    [Route("api/account")]
     [ApiController]
     public class AccountController : ControllerBase
     {

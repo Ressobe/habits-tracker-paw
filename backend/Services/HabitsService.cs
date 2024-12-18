@@ -31,4 +31,19 @@ public class HabitsService : IHabitsService
     }
     return habit.ToHabitDto();
   }
+
+    public async Task<Guid> UpdateHabitAsync(Guid id, UpdateHabitDto updateHabitDto, string userId)
+    {
+      var habit = await _habitRepo.GetByIdAsync(id, userId);
+      if (habit is null) {
+        throw new HabitNotFoundException("Habit not found");
+      }
+      habit.Name = updateHabitDto.Name;
+      habit.Description = updateHabitDto.Description;
+      habit.Priority = updateHabitDto.Priority;
+
+      await _habitRepo.UpdateAsync(habit);
+
+      return habit.Id;
+    }
 }
