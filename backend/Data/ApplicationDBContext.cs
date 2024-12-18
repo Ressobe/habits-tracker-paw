@@ -11,6 +11,7 @@ namespace backend.Data
         {
         }
         public DbSet<Habit> Habits { get; set; }
+        public DbSet<Category> Categories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -22,6 +23,19 @@ namespace backend.Data
                 .HasOne(u => u.CreatedBy)
                 .WithMany(h => h.Habits)
                 .HasForeignKey(h => h.CreatedById);
+
+            builder.Entity<Category>(x => x.HasKey(c => c.Id));
+
+            builder.Entity<Category>()
+                .HasOne(u => u.CreatedBy)
+                .WithMany(c => c.Categories)
+                .HasForeignKey(c => c.CreatedById);
+
+            builder.Entity<Habit>()
+                .HasOne(h => h.Category)
+                .WithMany(c => c.Habits)
+                .HasForeignKey(h => h.CategoryId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             List<IdentityRole> roles =
             [
