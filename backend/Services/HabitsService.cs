@@ -22,7 +22,14 @@ public class HabitsService : IHabitsService
     return await _habitRepo.CreateAsync(habit);
   }
 
-  public async Task<HabitDto> GetHabitByIdAsync(Guid id, string userId)
+  public async Task<List<HabitDto>> GetAllHabitsByUserIdAsync(string userId)
+  {
+    var habits = await _habitRepo.GetAllByUserIdAsync(userId);
+    var habitsDto = habits.Select(h => h.ToHabitDto());
+    return habitsDto.ToList();
+  }
+
+    public async Task<HabitDto> GetHabitByIdAsync(Guid id, string userId)
   {
     var habit = await _habitRepo.GetByIdAsync(id, userId);
 
@@ -32,18 +39,18 @@ public class HabitsService : IHabitsService
     return habit.ToHabitDto();
   }
 
-    public async Task<Guid> UpdateHabitAsync(Guid id, UpdateHabitDto updateHabitDto, string userId)
-    {
-      var habit = await _habitRepo.GetByIdAsync(id, userId);
-      if (habit is null) {
-        throw new HabitNotFoundException("Habit not found");
-      }
-      habit.Name = updateHabitDto.Name;
-      habit.Description = updateHabitDto.Description;
-      habit.Priority = updateHabitDto.Priority;
-
-      await _habitRepo.UpdateAsync(habit);
-
-      return habit.Id;
+  public async Task<Guid> UpdateHabitAsync(Guid id, UpdateHabitDto updateHabitDto, string userId)
+  {
+    var habit = await _habitRepo.GetByIdAsync(id, userId);
+    if (habit is null) {
+      throw new HabitNotFoundException("Habit not found");
     }
+    habit.Name = updateHabitDto.Name;
+    habit.Description = updateHabitDto.Description;
+    habit.Priority = updateHabitDto.Priority;
+
+    await _habitRepo.UpdateAsync(habit);
+
+    return habit.Id;
+  }
 }

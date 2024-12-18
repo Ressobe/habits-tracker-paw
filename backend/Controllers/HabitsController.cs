@@ -76,6 +76,31 @@ public class HabitsController : ControllerBase
   }
 
   /// <summary>
+  /// Get all habits created by user
+  /// </summary>
+  /// <returns></returns>
+  [HttpGet]
+  [AuthorizeUser]
+  [ProducesResponseType(typeof(List<HabitDto>), StatusCodes.Status200OK)]
+  [ProducesResponseType(StatusCodes.Status400BadRequest)]
+  [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+  [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+  public async Task<IActionResult> GetAll()
+  {
+    if (!ModelState.IsValid) {
+      return BadRequest(ModelState);
+    }
+    var userId = HttpContext.Items["UserId"] as string;
+    try {
+      var habits = await _habitsService.GetAllHabitsByUserIdAsync(userId);
+      return Ok(habits);
+    }
+    catch (Exception ex) {
+      return StatusCode(500, ex.Message);
+    }
+  }
+
+  /// <summary>
   /// Update habit by id
   /// </summary>
   /// <param name="id"></param>
