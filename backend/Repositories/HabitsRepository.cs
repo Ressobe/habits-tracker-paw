@@ -14,12 +14,19 @@ public class HabitsRepository(ApplicationDBContext context) : IHabitsRepository
     await _context.SaveChangesAsync();
     return habit.Id;
   }
+
+  public async Task DeleteAsync(Habit habit)
+  {
+    _context.Habits.Remove(habit);
+    await _context.SaveChangesAsync();
+  }
+
   public async Task<List<Habit>> GetAllByUserIdAsync(string userId)
   {
     return await _context.Habits.Where(u => u.CreatedById == userId)
       .ToListAsync();
   }
-    public async Task<Habit?> GetByIdAsync(Guid id, string userId)
+  public async Task<Habit?> GetByIdAsync(Guid id, string userId)
   {
     return await _context.Habits
       .Where(x => x.CreatedById == userId)

@@ -130,4 +130,34 @@ public class HabitsController : ControllerBase
       return StatusCode(500, ex.Message);
     }
   }
+
+  /// <summary>
+  /// Delete habit by id
+  /// </summary>
+  /// <param name="id"></param>
+  /// <returns></returns>
+  [HttpDelete("{id:guid}")]
+  [AuthorizeUser]
+  [ProducesResponseType(StatusCodes.Status204NoContent)]
+  [ProducesResponseType(StatusCodes.Status400BadRequest)]
+  [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+  [ProducesResponseType(StatusCodes.Status404NotFound)]
+  [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+  public async Task<IActionResult> DeleteHabit([FromRoute] Guid id)
+  {
+    if (!ModelState.IsValid) {
+      return BadRequest(ModelState);
+    }
+    var userId = HttpContext.Items["UserId"] as string;
+    try {
+      await _habitsService.DeleteHabitByIdAsync(id, userId);
+      return NoContent();
+    }
+    catch (HabitNotFoundException ex) {
+      return NotFound(new { message = ex.Message });
+    }
+    catch (Exception ex) {
+      return StatusCode(500, ex.Message);
+    }
+  }
 }

@@ -9,4 +9,5 @@ public interface IHabitsService
   Task<HabitDto> GetHabitByIdAsync(Guid id, string userId);
   Task<Guid> UpdateHabitAsync(Guid id, UpdateHabitDto updateHabitDto, string userId);
   Task<List<HabitDto>> GetAllHabitsByUserIdAsync(string userId);
+  Task DeleteHabitByIdAsync(Guid id, string userId);
 }
