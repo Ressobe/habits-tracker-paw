@@ -14,4 +14,11 @@ public class CategoriesService(ICategoriesRepository categoriesRepo) : ICategori
 
     return await _categoriesRepo.CreateAsync(category);
   }
+
+  public async Task<List<CategoryDto>> GetAllCategoriesByUserIdAsync(string userId)
+  {
+    var categories = await _categoriesRepo.GetAllByUserIdAsync(userId);
+
+    return categories.Select(c => c.ToCategoryDto()).ToList();
+  }
 }

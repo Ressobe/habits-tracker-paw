@@ -1,6 +1,7 @@
 using backend.Data;
 using backend.Interfaces;
 using backend.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Repositories;
 
@@ -12,5 +13,10 @@ public class CategoriesRepository(ApplicationDBContext context) : ICategoriesRep
     await _context.Categories.AddAsync(category);
     await _context.SaveChangesAsync();
     return category.Id;
+  }
+
+  public async Task<List<Category>> GetAllByUserIdAsync(string userId)
+  {
+    return await _context.Categories.Where(c => c.CreatedById == userId).ToListAsync();
   }
 }

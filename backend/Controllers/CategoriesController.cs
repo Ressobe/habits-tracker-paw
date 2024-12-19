@@ -38,4 +38,25 @@ public class CategoriesController(ICategoriesService categoriesService) : Contro
       return StatusCode(500, ex.Message);
     }
   }
+
+  /// <summary>
+  /// Get all categories created by user
+  /// </summary>
+  /// <returns></returns>
+  [HttpGet]
+  [AuthorizeUser]
+  [ProducesResponseType(typeof(List<CategoryDto>), StatusCodes.Status200OK)]
+  [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+  [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+  public async Task<IActionResult> GetAll()
+  {
+    var userId = HttpContext.Items["UserId"] as string;
+    try {
+      var categories = await _categoriesService.GetAllCategoriesByUserIdAsync(userId);
+      return Ok(categories);
+    }
+    catch (Exception ex) {
+      return StatusCode(500, ex.Message);
+    }
+  }
 }

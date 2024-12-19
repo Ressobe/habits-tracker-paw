@@ -12,4 +12,12 @@ public static class CategoriesMapper
       Name = createCategoryDto.Name,
     };
   }
+  public static CategoryDto ToCategoryDto(this Category category)
+  {
+    return new CategoryDto
+    {
+      Id = category.Id,
+      Name = category.Name
+    };
+  }
 }
