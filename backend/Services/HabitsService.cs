@@ -63,32 +63,27 @@ public class HabitsService : IHabitsService
     if (habit is null) {
       throw new HabitNotFoundException("Habit not found");
     }
-    int countChanges = 0;
     if (updateHabitDto.Name is not null) {
       habit.Name = updateHabitDto.Name;
-      countChanges++;
     }
     if (updateHabitDto.Description is not null) {
       habit.Description = updateHabitDto.Description;
-      countChanges++;
     }
     if (updateHabitDto.Priority is not null) {
       habit.Priority = (int)updateHabitDto.Priority;
-      countChanges++;
     }
-    if (updateHabitDto.CategoryId is not null) {
-      var category = await _categoriesRepo.GetByIdAsync((Guid)updateHabitDto.CategoryId, userId);
-      if (category is null) {
-        throw new CategoryNotFoundException("Category not found");
+    if (updateHabitDto.CategoryId is null) {
+      habit.CategoryId = null;
+    }
+    else {
+      if (habit.CategoryId != updateHabitDto.CategoryId) {
+        var category = await _categoriesRepo.GetByIdAsync((Guid)updateHabitDto.CategoryId, userId);
+        if (category is null) {
+          throw new CategoryNotFoundException("Category not found");
+        }
+        habit.CategoryId = category.Id;
       }
-      habit.CategoryId = category.Id;
-      countChanges++;
     }
-
-    if (countChanges == 0) {
-      throw new NothingToUpdateException("Nothing to update. Stop sending requests!");
-    }
-
     await _habitRepo.UpdateAsync(habit);
 
     return habit.Id;
