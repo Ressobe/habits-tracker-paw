@@ -20,40 +20,54 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { NewHabit, newHabitSchema } from "@/types/habit";
+import { Habit, NewHabit, newHabitSchema } from "@/types/habit";
 import { createHabitAction } from "../actions/create-habit";
 import { ErrorToastMessage } from "@/components/error-toast-message";
 import { useToast } from "@/hooks/use-toast";
 import { SucessToastMessage } from "@/components/sucess-toast-message";
+import { updateHabitAction } from "../actions/update-habit";
 
 type HabitFormProps = {
   onSuccess?: () => void;
   onError?: () => void;
+  defaultValues?: Habit;
 };
 
-export function HabitForm({ onSuccess, onError }: HabitFormProps) {
+export function HabitForm({
+  onSuccess,
+  onError,
+  defaultValues,
+}: HabitFormProps) {
   const form = useForm<NewHabit>({
     resolver: zodResolver(newHabitSchema),
     defaultValues: {
-      name: "",
-      description: "",
-      priority: 1,
+      name: defaultValues?.name ?? "",
+      description: defaultValues?.description ?? "",
+      priority: defaultValues?.priority ?? 1,
     },
   });
 
   const { toast } = useToast();
 
   const onSubmit = async (values: NewHabit) => {
-    const response = await createHabitAction(values);
-    if (response.sucess) {
+    let response = null;
+
+    if (defaultValues) {
+      response = await updateHabitAction(defaultValues.id, values);
+    }
+    if (!defaultValues) {
+      response = await createHabitAction(values);
+    }
+
+    if (response?.success) {
       toast({
-        description: <SucessToastMessage message={response.sucess} />,
+        description: <SucessToastMessage message={response.success} />,
         className: "bg-secondary opacity-90",
         duration: 2000,
       });
       onSuccess?.();
     }
-    if (response.error) {
+    if (response?.error) {
       toast({
         description: <ErrorToastMessage message={response.error} />,
         className: "bg-secondary opacity-90",
@@ -122,7 +136,9 @@ export function HabitForm({ onSuccess, onError }: HabitFormProps) {
           )}
         />
         <div className="flex justify-end">
-          <Button type="submit">Add habit</Button>
+          <Button type="submit">
+            {defaultValues ? " Update" : "Add"} habit
+          </Button>
         </div>
       </form>
     </Form>
