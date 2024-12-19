@@ -76,6 +76,14 @@ public class HabitsService : IHabitsService
       habit.Priority = (int)updateHabitDto.Priority;
       countChanges++;
     }
+    if (updateHabitDto.CategoryId is not null) {
+      var category = await _categoriesRepo.GetByIdAsync((Guid)updateHabitDto.CategoryId, userId);
+      if (category is null) {
+        throw new CategoryNotFoundException("Category not found");
+      }
+      habit.CategoryId = category.Id;
+      countChanges++;
+    }
 
     if (countChanges == 0) {
       throw new NothingToUpdateException("Nothing to update. Stop sending requests!");

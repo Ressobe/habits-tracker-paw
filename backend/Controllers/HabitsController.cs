@@ -2,6 +2,7 @@ using backend.Dtos.Habits;
 using backend.Exceptions;
 using backend.Filters;
 using backend.Interfaces;
+using backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -122,6 +123,12 @@ public class HabitsController : ControllerBase
     }
     catch (HabitNotFoundException ex) {
       return NotFound(new { message = ex.Message });
+    }
+    catch (CategoryNotFoundException ex) {
+      return NotFound(new { message = ex.Message });
+    }
+    catch (NothingToUpdateException ex) {
+      return BadRequest(new { message = ex.Message });
     }
     catch (Exception ex) {
       return StatusCode(500, ex.Message);

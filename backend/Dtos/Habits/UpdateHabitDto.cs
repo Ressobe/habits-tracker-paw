@@ -10,4 +10,5 @@ public class UpdateHabitDto
   public string? Description { get; set; }
   [Range(1, 3, ErrorMessage = "priority must be between 1 and 3")]
   public int? Priority { get; set; }
+  public Guid? CategoryId { get; set; }
 }
