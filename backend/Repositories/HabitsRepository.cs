@@ -23,14 +23,16 @@ public class HabitsRepository(ApplicationDBContext context) : IHabitsRepository
 
   public async Task<List<Habit>> GetAllByUserIdAsync(string userId)
   {
-    return await _context.Habits.Where(u => u.CreatedById == userId)
+    return await _context.Habits
+      .Include(h => h.Category)
+      .Where(u => u.CreatedById == userId)
       .ToListAsync();
   }
   public async Task<Habit?> GetByIdAsync(Guid id, string userId)
   {
     return await _context.Habits
-      .Where(x => x.CreatedById == userId)
-      .FirstOrDefaultAsync(h => h.Id == id);
+      .Include(h => h.Category)
+      .FirstOrDefaultAsync(h => h.Id == id && h.CreatedById == userId);
   }
   public async Task<Guid> UpdateAsync(Habit habit)
   {

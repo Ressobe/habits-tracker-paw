@@ -11,7 +11,8 @@ public static class HabitsMapper
     {
       Name = createHabitDto.Name,
       Description = createHabitDto.Description,
-      Priority = createHabitDto.Priority
+      Priority = createHabitDto.Priority,
+      CategoryId = createHabitDto.CategoryId
     };
   }
   public static HabitDto ToHabitDto(this Habit habit)
@@ -22,7 +23,8 @@ public static class HabitsMapper
       Name = habit.Name,
       Description = habit.Description,
       Priority = habit.Priority,
-      CreatedAt = habit.CreatedAt
+      CreatedAt = habit.CreatedAt,
+      Category = habit.Category?.ToCategoryDto()
     };
   }
 }

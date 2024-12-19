@@ -92,12 +92,12 @@ namespace backend.Controllers
             var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName.ToLower() == loginDto.Username.ToLower());
 
             if (user is null) {
-                return Unauthorized("Username not found or password incorrect");
+                return Unauthorized(new { message = "Username not found or password incorrect" });
             }
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
 
             if (!result.Succeeded) {
-                return Unauthorized("Username not found or password incorrect");
+                return Unauthorized(new { message = "Username not found or password incorrect" });
             }
 
             return Ok(
@@ -122,12 +122,12 @@ namespace backend.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId)) {
-                return Unauthorized("User not authenticated");
+                return Unauthorized(new { message = "User not authenticated" });
             }
 
             var user = await _userManager.FindByIdAsync(userId);
             if (user is null) {
-                return Unauthorized("Invalid user!");
+                return Unauthorized(new { message = "Invalid user!" });
             }
             return Ok(
                 new GetMeDto
@@ -163,10 +163,10 @@ namespace backend.Controllers
             var user = await _userManager.FindByIdAsync(userId);
 
             if (user is null) {
-                return Unauthorized("Invalid username!");
+                return Unauthorized(new { message = "Invalid username!" });
             }
             if (changePasswordDto.CurrentPassword == changePasswordDto.NewPassword) {
-                return BadRequest("New password cannot be the same as the current password");
+                return BadRequest(new { message = "New password cannot be the same as the current password" });
             }
             var changePasswordResult = await _userManager.ChangePasswordAsync(
                 user,
@@ -174,7 +174,7 @@ namespace backend.Controllers
                 changePasswordDto.NewPassword
             );
             if (changePasswordResult.Succeeded) {
-                return Ok("Password changed successfully");
+                return Ok(new { message = "Password changed successfully" });
             }
             else {
                 return StatusCode(500, changePasswordResult.Errors);
@@ -201,14 +201,14 @@ namespace backend.Controllers
 
             var user = await _userManager.FindByIdAsync(userId);
             if (user is null) {
-                return Unauthorized("Invalid user!");
+                return Unauthorized(new { message = "Invalid user!" });
             }
 
             user.FirstName = updateNamesDto.FirstName;
             user.LastName = updateNamesDto.LastName;
 
             await _userManager.UpdateAsync(user);
-            return Ok("Account updated successfully");
+            return Ok(new { message = "Account updated successfully" });
         }
     }
 }

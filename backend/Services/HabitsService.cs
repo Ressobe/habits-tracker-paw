@@ -9,14 +9,23 @@ namespace backend.Services;
 public class HabitsService : IHabitsService
 {
   private readonly IHabitsRepository _habitRepo;
-  public HabitsService(IHabitsRepository habitRepo)
+  private readonly ICategoriesRepository _categoriesRepo;
+  public HabitsService(IHabitsRepository habitRepo, ICategoriesRepository categoriesRepo)
   {
     _habitRepo = habitRepo;
+    _categoriesRepo = categoriesRepo;
   }
 
   public async Task<Guid> CreateHabitAsync(CreateHabitDto toCreateHabit, string userId)
   {
     var habit = toCreateHabit.ToHabitFromDto();
+    if (habit.CategoryId is not null) {
+      var category = await _categoriesRepo.GetByIdAsync((Guid)habit.CategoryId, userId);
+      if (category is null) {
+        throw new CategoryNotFoundException("Category not found");
+      }
+      habit.CategoryId = category.Id;
+    }
     habit.CreatedById = userId;
 
     return await _habitRepo.CreateAsync(habit);
@@ -54,10 +63,27 @@ public class HabitsService : IHabitsService
     if (habit is null) {
       throw new HabitNotFoundException("Habit not found");
     }
-    habit.Name = updateHabitDto.Name;
-    habit.Description = updateHabitDto.Description;
-    habit.Priority = updateHabitDto.Priority;
-
+    if (updateHabitDto.Name is not null) {
+      habit.Name = updateHabitDto.Name;
+    }
+    if (updateHabitDto.Description is not null) {
+      habit.Description = updateHabitDto.Description;
+    }
+    if (updateHabitDto.Priority is not null) {
+      habit.Priority = (int)updateHabitDto.Priority;
+    }
+    if (updateHabitDto.CategoryId is null) {
+      habit.CategoryId = null;
+    }
+    else {
+      if (habit.CategoryId != updateHabitDto.CategoryId) {
+        var category = await _categoriesRepo.GetByIdAsync((Guid)updateHabitDto.CategoryId, userId);
+        if (category is null) {
+          throw new CategoryNotFoundException("Category not found");
+        }
+        habit.CategoryId = category.Id;
+      }
+    }
     await _habitRepo.UpdateAsync(habit);
 
     return habit.Id;

@@ -12,4 +12,5 @@ public class CreateHabitDto
   public string Description { get; set; } = string.Empty;
   [Range(1, 3, ErrorMessage = "priority must be between 1 and 3")]
   public int Priority { get; set; } = 1;
+  public Guid? CategoryId { get; set; }
 }
