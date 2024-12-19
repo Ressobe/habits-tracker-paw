@@ -5,7 +5,7 @@ export const habitSchema = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string(),
-  cateogry: categorySchema,
+  category: categorySchema,
   priority: z.number(),
   createdAt: z.date(),
 });

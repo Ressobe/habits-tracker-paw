@@ -5,7 +5,7 @@ import { Register } from "@/types/auth";
 import { cookies } from "next/headers";
 
 export async function registerAction(values: Register) {
-  const { data, error } = await apiClient.POST("/register", {
+  const { data, error } = await apiClient.POST("/api/account/register", {
     body: {
       username: values.name,
       email: values.email,
@@ -16,6 +16,7 @@ export async function registerAction(values: Register) {
   });
 
   if (error) {
+    console.log(error);
     const errorMessage = Array.isArray(error)
       ? error.map((err) => `${err.description}`).join(", ")
       : `${error}`;

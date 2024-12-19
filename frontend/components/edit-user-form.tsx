@@ -108,7 +108,9 @@ export function EditUserForm({
         </div>
         <div className="flex justify-end">
           <div className="flex gap-2">
-            <Button variant="outline">Cancel</Button>
+            <Button variant="outline" type="button">
+              Cancel
+            </Button>
             <Button type="submit">Update</Button>
           </div>
         </div>
