@@ -91,4 +91,30 @@ public class CategoriesController(ICategoriesService categoriesService) : Contro
       return StatusCode(500, ex.Message);
     }
   }
+
+  /// <summary>
+  /// Delete category by id
+  /// </summary>
+  /// <param name="id"></param>
+  /// <returns></returns>
+  [HttpDelete("{id:guid}")]
+  [AuthorizeUser]
+  [ProducesResponseType(StatusCodes.Status204NoContent)]
+  [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+  [ProducesResponseType(StatusCodes.Status404NotFound)]
+  [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+  public async Task<IActionResult> DeleteCategory([FromRoute] Guid id)
+  {
+    var userId = HttpContext.Items["UserId"] as string;
+    try {
+      await _categoriesService.DeleteCategoryAsync(id, userId);
+      return NoContent();
+    }
+    catch (CategoryNotFoundException ex) {
+      return NotFound(new { message = ex.Message });
+    }
+    catch (Exception ex) {
+      return StatusCode(500, ex.Message);
+    }
+  }
 }

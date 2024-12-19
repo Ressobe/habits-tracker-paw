@@ -15,7 +15,13 @@ public class CategoriesRepository(ApplicationDBContext context) : ICategoriesRep
     return category.Id;
   }
 
-  public async Task<List<Category>> GetAllByUserIdAsync(string userId)
+  public async Task DeleteAsync(Category category)
+  {
+    _context.Categories.Remove(category);
+    await _context.SaveChangesAsync();
+  }
+
+    public async Task<List<Category>> GetAllByUserIdAsync(string userId)
   {
     return await _context.Categories.Where(c => c.CreatedById == userId).ToListAsync();
   }

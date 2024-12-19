@@ -16,7 +16,16 @@ public class CategoriesService(ICategoriesRepository categoriesRepo) : ICategori
     return await _categoriesRepo.CreateAsync(category);
   }
 
-  public async Task<List<CategoryDto>> GetAllCategoriesByUserIdAsync(string userId)
+  public async Task DeleteCategoryAsync(Guid categoryId, string userId)
+  {
+    var toDeleteCategory = await _categoriesRepo.GetByIdAsync(categoryId, userId);
+    if (toDeleteCategory is null) {
+      throw new CategoryNotFoundException();
+    }
+    await _categoriesRepo.DeleteAsync(toDeleteCategory);
+  }
+
+    public async Task<List<CategoryDto>> GetAllCategoriesByUserIdAsync(string userId)
   {
     var categories = await _categoriesRepo.GetAllByUserIdAsync(userId);
 
