@@ -1,0 +1,8 @@
+using backend.Dtos.Categories;
+
+namespace backend.Interfaces;
+
+public interface ICategoriesService
+{
+  Task<Guid> CreateCategoryAsync(CreateCategoryDto toCreateCategory, string userId);
+}

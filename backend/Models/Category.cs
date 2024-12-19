@@ -5,7 +5,7 @@ namespace backend.Models;
 [Table("Categories")]
 public class Category
 {
-  public Guid Id { get; set; }
+  public Guid Id { get; set; } = Guid.NewGuid();
   public string Name { get; set; }
   public string CreatedById { get; set; }
   public AppUser CreatedBy { get; set; }
