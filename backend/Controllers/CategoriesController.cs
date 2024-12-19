@@ -1,4 +1,5 @@
 using backend.Dtos.Categories;
+using backend.Exceptions;
 using backend.Filters;
 using backend.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -54,6 +55,37 @@ public class CategoriesController(ICategoriesService categoriesService) : Contro
     try {
       var categories = await _categoriesService.GetAllCategoriesByUserIdAsync(userId);
       return Ok(categories);
+    }
+    catch (Exception ex) {
+      return StatusCode(500, ex.Message);
+    }
+  }
+
+  /// <summary>
+  /// Update category by id
+  /// </summary>
+  /// <param name="id"></param>
+  /// <param name="toUpdateCategory"></param>
+  /// <returns></returns>
+  [HttpPut("{id:guid}")]
+  [AuthorizeUser]
+  [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
+  [ProducesResponseType(StatusCodes.Status400BadRequest)]
+  [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+  [ProducesResponseType(StatusCodes.Status404NotFound)]
+  [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+  public async Task<IActionResult> UpdateCategory([FromRoute] Guid id, [FromBody] UpdateCategoryDto toUpdateCategory)
+  {
+    if (!ModelState.IsValid) {
+      return BadRequest(ModelState);
+    }
+    var userId = HttpContext.Items["UserId"] as string;
+    try {
+      var categoryId = await _categoriesService.UpdateCategoryAsync(id, toUpdateCategory, userId);
+      return Ok(categoryId);
+    }
+    catch (CategoryNotFoundException ex) {
+      return NotFound(new { message = ex.Message });
     }
     catch (Exception ex) {
       return StatusCode(500, ex.Message);

@@ -29,8 +29,7 @@ public class HabitsRepository(ApplicationDBContext context) : IHabitsRepository
   public async Task<Habit?> GetByIdAsync(Guid id, string userId)
   {
     return await _context.Habits
-      .Where(x => x.CreatedById == userId)
-      .FirstOrDefaultAsync(h => h.Id == id);
+      .FirstOrDefaultAsync(h => h.Id == id && h.CreatedById == userId);
   }
   public async Task<Guid> UpdateAsync(Habit habit)
   {

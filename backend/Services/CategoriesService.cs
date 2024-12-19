@@ -1,4 +1,5 @@
 using backend.Dtos.Categories;
+using backend.Exceptions;
 using backend.Interfaces;
 using backend.Mappers;
 
@@ -20,5 +21,16 @@ public class CategoriesService(ICategoriesRepository categoriesRepo) : ICategori
     var categories = await _categoriesRepo.GetAllByUserIdAsync(userId);
 
     return categories.Select(c => c.ToCategoryDto()).ToList();
+  }
+
+  public async Task<Guid> UpdateCategoryAsync(Guid categoryId, UpdateCategoryDto updateCategoryDto, string userId)
+  {
+    var category = await _categoriesRepo.GetByIdAsync(categoryId, userId);
+    if (category is null) {
+      throw new CategoryNotFoundException();
+    }
+    category.Name = updateCategoryDto.Name;
+    await _categoriesRepo.UpdateAsync(category);
+    return category.Id;
   }
 }

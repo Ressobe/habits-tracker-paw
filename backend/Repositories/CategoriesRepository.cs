@@ -19,4 +19,17 @@ public class CategoriesRepository(ApplicationDBContext context) : ICategoriesRep
   {
     return await _context.Categories.Where(c => c.CreatedById == userId).ToListAsync();
   }
+
+  public async Task<Category?> GetByIdAsync(Guid id, string userId)
+  {
+    return await _context.Categories
+      .FirstOrDefaultAsync(c => c.Id == id && c.CreatedById == userId);
+  }
+
+    public async Task<Guid> UpdateAsync(Category category)
+  {
+    _context.Entry(category).State = EntityState.Modified;
+    await _context.SaveChangesAsync();
+    return category.Id;
+  }
 }
