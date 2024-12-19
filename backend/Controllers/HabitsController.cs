@@ -39,6 +39,9 @@ public class HabitsController : ControllerBase
       var createdHabitId = await _habitsService.CreateHabitAsync(createHabitDto, userId);
       return CreatedAtAction(nameof(CreateHabit), new { id = createdHabitId }, createdHabitId);
     }
+    catch (CategoryNotFoundException ex) {
+      return NotFound(new { message = ex.Message });
+    }
     catch (Exception ex)
     {
       return StatusCode(500, ex.Message);
@@ -59,9 +62,6 @@ public class HabitsController : ControllerBase
   [ProducesResponseType(StatusCodes.Status500InternalServerError)]
   public async Task<IActionResult> GetById([FromRoute] Guid id)
   {
-    if (!ModelState.IsValid) {
-      return BadRequest(ModelState);
-    }
     var userId = HttpContext.Items["UserId"] as string;
     try {
       var habit = await _habitsService.GetHabitByIdAsync(id, userId);
@@ -87,9 +87,6 @@ public class HabitsController : ControllerBase
   [ProducesResponseType(StatusCodes.Status500InternalServerError)]
   public async Task<IActionResult> GetAll()
   {
-    if (!ModelState.IsValid) {
-      return BadRequest(ModelState);
-    }
     var userId = HttpContext.Items["UserId"] as string;
     try {
       var habits = await _habitsService.GetAllHabitsByUserIdAsync(userId);
@@ -145,9 +142,6 @@ public class HabitsController : ControllerBase
   [ProducesResponseType(StatusCodes.Status500InternalServerError)]
   public async Task<IActionResult> DeleteHabit([FromRoute] Guid id)
   {
-    if (!ModelState.IsValid) {
-      return BadRequest(ModelState);
-    }
     var userId = HttpContext.Items["UserId"] as string;
     try {
       await _habitsService.DeleteHabitByIdAsync(id, userId);

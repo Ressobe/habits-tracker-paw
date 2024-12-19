@@ -9,14 +9,23 @@ namespace backend.Services;
 public class HabitsService : IHabitsService
 {
   private readonly IHabitsRepository _habitRepo;
-  public HabitsService(IHabitsRepository habitRepo)
+  private readonly ICategoriesRepository _categoriesRepo;
+  public HabitsService(IHabitsRepository habitRepo, ICategoriesRepository categoriesRepo)
   {
     _habitRepo = habitRepo;
+    _categoriesRepo = categoriesRepo;
   }
 
   public async Task<Guid> CreateHabitAsync(CreateHabitDto toCreateHabit, string userId)
   {
     var habit = toCreateHabit.ToHabitFromDto();
+    if (habit.CategoryId is not null) {
+      var category = await _categoriesRepo.GetByIdAsync((Guid)habit.CategoryId, userId);
+      if (category is null) {
+        throw new CategoryNotFoundException("Category not found");
+      }
+      habit.CategoryId = category.Id;
+    }
     habit.CreatedById = userId;
 
     return await _habitRepo.CreateAsync(habit);
