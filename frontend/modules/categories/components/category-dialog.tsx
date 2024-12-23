@@ -28,9 +28,9 @@ export function CategoryDialog({ closeDropdownMenu }: CategoryDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">
+        <Button variant="ghost" className="w-full flex items-center justify-start">
           <Bookmark />
-          Add Category
+          Create category
         </Button>
       </DialogTrigger>
       <DialogContent>

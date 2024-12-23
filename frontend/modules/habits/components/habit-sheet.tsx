@@ -20,9 +20,9 @@ export function HabitSheet() {
   return (
     <Sheet open={opened} onOpenChange={setOpened}>
       <SheetTrigger asChild>
-        <Button className="flex items-center" variant="outline">
+        <Button className="flex items-center justify-start w-full" variant="ghost">
           <Plus />
-          <span>Add Habit</span>
+          <span>Create habit</span>
         </Button>
       </SheetTrigger>
       <SheetContent className="space-y-6">

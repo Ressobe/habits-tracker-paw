@@ -5,9 +5,9 @@ export const habitSchema = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string(),
-  category: categorySchema,
+  category: categorySchema.optional(),
   priority: z.number(),
-  createdAt: z.date(),
+  createdAt: z.string(),
 });
 export type Habit = z.infer<typeof habitSchema>;
 

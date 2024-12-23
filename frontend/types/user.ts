@@ -10,3 +10,12 @@ export const updateUserSchema = z.object({
 });
 
 export type UpdateUser = z.infer<typeof updateUserSchema>;
+
+export const userSchema = z.object({
+  username: z.string(),
+  email: z.string(),
+  firstName: z.string(),
+  lastName: z.string(),
+});
+
+export type User = z.infer<typeof userSchema>;
