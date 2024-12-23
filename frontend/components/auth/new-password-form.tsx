@@ -93,8 +93,6 @@ export function NewPasswordForm() {
               )}
             />
           </div>
-          <FormError message={error} />
-          <FormSucess message={sucess} />
           <Button
             variant="secondary"
             type="submit"

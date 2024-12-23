@@ -10,7 +10,6 @@ import {
 import { MoreVertical, SquarePen, Trash } from "lucide-react";
 import { useState } from "react";
 import { Habit } from "@/types/habit";
-import { Button } from "@/components/ui/button";
 import IconMenu from "@/components/icon-menu";
 import { ResponsiveDialog } from "@/components/responsive-dialog";
 import { HabitForm } from "./habit-form";
@@ -44,10 +43,8 @@ export function HabitDropdownMenu({ habit }: HabitDropdownMenuProps) {
         <DeleteHabitForm habitId={habit.id} />
       </ResponsiveDialog>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="p-0">
-            <MoreVertical />
-          </Button>
+        <DropdownMenuTrigger>
+          <MoreVertical className="w-4 h-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent
           side="bottom"

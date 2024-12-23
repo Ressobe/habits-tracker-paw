@@ -20,21 +20,21 @@ import { SucessToastMessage } from "./sucess-toast-message";
 import { ErrorToastMessage } from "./error-toast-message";
 
 type EditUserFormProps = {
-  defaultValues: UpdateUser;
+  // defaultValues: UpdateUser;
   onSuccess?: () => void;
   onError?: () => void;
 };
 
 export function EditUserForm({
-  defaultValues,
+  // defaultValues,
   onSuccess,
   onError,
 }: EditUserFormProps) {
   const form = useForm<UpdateUser & ActionReponse>({
     resolver: zodResolver(updateUserSchema),
     defaultValues: {
-      firstName: defaultValues.firstName,
-      lastName: defaultValues.lastName,
+      firstName: "",
+      lastName: "",
     },
   });
 
