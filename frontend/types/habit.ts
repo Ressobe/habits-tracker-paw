@@ -29,10 +29,10 @@ export const newHabitSchema = z.object({
     .min(3, { message: "Name must be at least 2 characters" })
     .max(50, { message: "Name must be less than 50 characters" }),
   description: z.string().optional(),
-  // cateogryId: z.number(),
   priority: z
     .union([z.string(), z.number()])
     .transform((val) => (typeof val === "string" ? parseFloat(val) : val))
     .refine((val) => !isNaN(val), { message: "Must be a valid number" }),
+  categoryId: z.string().optional(),
 });
 export type NewHabit = z.infer<typeof newHabitSchema>;

@@ -26,6 +26,7 @@ import { ErrorToastMessage } from "@/components/error-toast-message";
 import { useToast } from "@/hooks/use-toast";
 import { SucessToastMessage } from "@/components/sucess-toast-message";
 import { updateHabitAction } from "../actions/update-habit";
+import { useCategoriesStore } from "@/stores/use-categories-store";
 
 type HabitFormProps = {
   onSuccess?: () => void;
@@ -38,12 +39,16 @@ export function HabitForm({
   onError,
   defaultValues,
 }: HabitFormProps) {
+  const categories = useCategoriesStore((state) => state.categories) ?? [];
+  const defaultCategory = defaultValues?.category?.id ?? undefined;
+
   const form = useForm<NewHabit>({
     resolver: zodResolver(newHabitSchema),
     defaultValues: {
       name: defaultValues?.name ?? "",
       description: defaultValues?.description ?? "",
       priority: defaultValues?.priority ?? 1,
+      categoryId: defaultCategory,
     },
   });
 
@@ -94,6 +99,36 @@ export function HabitForm({
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="categoryId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Category</FormLabel>
+              <Select
+                onValueChange={field.onChange}
+                defaultValue={`${defaultCategory}`}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {categories.map((item) => (
+                    <SelectItem key={item.id} value={`${item.id}`}>
+                      {item.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormDescription>
+                Select a category for your habit
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <FormField
           control={form.control}
@@ -135,6 +170,7 @@ export function HabitForm({
             </FormItem>
           )}
         />
+
         <div className="flex justify-end">
           <Button type="submit">
             {defaultValues ? " Update" : "Add"} habit

@@ -8,7 +8,7 @@ export async function createHabitAction(values: NewHabit) {
   const { error } = await createHabit(values);
 
   if (error) {
-    return { error: "Something went wrong!" };
+    return { error: error.title };
   }
 
   revalidateTag("habits");

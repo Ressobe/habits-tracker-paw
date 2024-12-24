@@ -24,7 +24,7 @@ export function HabitItem({ habit, selected }: HabitItemProps) {
         <div className="space-y-2">
           <CardTitle>{habit.name}</CardTitle>
           <CardDescription className="flex gap-x-2">
-            <Badge variant="outline">{"tu bedzie kategoria"}</Badge>
+            {habit.category && <Badge variant="outline">{habit.category.name}</Badge>}
             <PriorityBadge priority={habit.priority} />
           </CardDescription>
         </div>
