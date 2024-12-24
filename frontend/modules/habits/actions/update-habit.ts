@@ -2,7 +2,7 @@
 
 import apiClient from "@/api/client";
 import { NewHabit } from "@/types/habit";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidateTag } from "next/cache";
 
 export async function updateHabitAction(habitId: string, values: NewHabit) {
   const { error } = await apiClient.PUT("/api/habits/{id}", {
@@ -15,6 +15,7 @@ export async function updateHabitAction(habitId: string, values: NewHabit) {
       name: values.name,
       priority: values.priority,
       description: values.description,
+      categoryId: values.categoryId
     },
   });
 
