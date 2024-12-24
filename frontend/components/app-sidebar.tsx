@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Sidebar,
   SidebarContent,
@@ -14,19 +12,31 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
-import { Home, List, Settings, Settings2, Trees } from "lucide-react"
+import { Home, Key, Settings2, Tag, Trees, UserPen } from "lucide-react"
 import { NavUser } from "./nav-user"
 import { User } from "@/types/user"
 import { SettingsDialog } from "./settings-dialog2";
 import { HabitSheet } from "@/modules/habits/components/habit-sheet";
 import { CategoryDialog } from "@/modules/categories/components/category-dialog";
+import { EditUserForm } from "./edit-user-form";
+import { NewPasswordForm } from "./auth/new-password-form";
+import { Category } from "@/types/category";
+import { CategoriesList } from "@/modules/categories/components/categories-list";
 
 type AppSidebarProps = {
   user: User;
+  categories: Category[];
 };
 
+export function AppSidebar({ user, categories }: AppSidebarProps) {
 
-export function AppSidebar({ user }: AppSidebarProps) {
+  const data = [
+    { name: "account", icon: <UserPen />, component: <EditUserForm /> },
+    { name: "categories", icon: <Tag />, component: <CategoriesList categories={categories} /> },
+    { name: "password", icon: <Key />, component: <NewPasswordForm /> },
+  ];
+
+
   return (
     <Sidebar>
       <SidebarHeader className="flex">
@@ -66,10 +76,8 @@ export function AppSidebar({ user }: AppSidebarProps) {
 
               </SidebarMenuItem>
 
-
-
               <SidebarMenuItem>
-                <SettingsDialog />
+                <SettingsDialog data={data} />
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>

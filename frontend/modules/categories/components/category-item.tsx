@@ -1,7 +1,6 @@
 import { Category } from "@/types/category";
 import { EditCategoryForm } from "./edit-category-form";
-import { Button } from "@/components/ui/button";
-import { Trash } from "lucide-react";
+import { DeleteCategoryAlertDialog } from "./delete-category-alert-dialog";
 
 type CategoryItemProps = {
   category: Category;
@@ -9,11 +8,9 @@ type CategoryItemProps = {
 
 export function CategoryItem({ category }: CategoryItemProps) {
   return (
-    <li className="flex items-center">
+    <li className="w-full flex items-center">
       <EditCategoryForm category={category} />
-      <Button variant="ghost">
-        <Trash />
-      </Button>
+      <DeleteCategoryAlertDialog category={category} />
     </li>
   );
 }

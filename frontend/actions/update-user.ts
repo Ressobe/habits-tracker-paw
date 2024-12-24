@@ -18,7 +18,5 @@ export async function updateUserAction(values: UpdateUser) {
 
   revalidateTag("user-info");
 
-  console.log(data?.message);
-
   return { success: "user updated!" };
 }
