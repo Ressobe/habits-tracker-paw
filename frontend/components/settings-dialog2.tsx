@@ -1,8 +1,8 @@
-import { useState } from "react";
+'use client';
+
+import { ReactNode, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
-  UserPen,
-  Key,
   Settings,
 } from "lucide-react";
 import {
@@ -29,22 +29,24 @@ import {
   SidebarMenuItem,
   SidebarProvider,
 } from "@/components/ui/sidebar";
-import { EditUserForm } from "./edit-user-form";
-import { NewPasswordForm } from "./auth/new-password-form";
 import { capitalize } from "@/lib/utils";
 
-const data = {
-  nav: [
-    { name: "account", icon: UserPen, content: EditUserForm },
-    { name: "password", icon: Key, content: NewPasswordForm },
-  ],
+
+type Tab = {
+  name: string;
+  icon: ReactNode;
+  component: ReactNode;
+}
+
+type SettingsDialogProps = {
+  data: Tab[];
 };
 
-export function SettingsDialog() {
+export function SettingsDialog({ data }: SettingsDialogProps) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const activeView = searchParams.get("view") || "account";
+  const activeView = searchParams.get("view") || data[0].name;
 
   const updateView = (viewName: string) => {
     const params = new URLSearchParams(searchParams);
@@ -53,12 +55,12 @@ export function SettingsDialog() {
   };
 
   const renderContent = (viewName: string) => {
-    const view = data.nav.find(item => item.name === viewName);
+    const view = data.find(item => item.name === viewName);
     if (!view) return null;
     return (
       <div className="flex flex-col gap-4 p-4">
         <h2 className="text-2xl font-semibold">{capitalize(view?.name)}</h2>
-        {<view.content />}
+        {view.component}
       </div>
     );
   };
@@ -82,7 +84,7 @@ export function SettingsDialog() {
               <SidebarGroup>
                 <SidebarGroupContent>
                   <SidebarMenu>
-                    {data.nav.map((item) => (
+                    {data.map((item) => (
                       <SidebarMenuItem key={item.name}>
                         <SidebarMenuButton
                           asChild
@@ -92,7 +94,7 @@ export function SettingsDialog() {
                             onClick={() => updateView(item.name)}
                             className="w-full flex items-center gap-2 px-2 py-1"
                           >
-                            <item.icon className="h-4 w-4" />
+                            {item.icon}
                             <span>{capitalize(item.name)}</span>
                           </button>
                         </SidebarMenuButton>

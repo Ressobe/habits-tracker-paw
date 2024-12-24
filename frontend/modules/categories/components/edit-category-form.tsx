@@ -6,18 +6,21 @@ import {
   FormField,
   FormItem,
   FormControl,
-  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
   Category,
-  CreateCategory,
   createCategorySchema,
+  UpdateCategory,
 } from "@/types/category";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, Pencil, X } from "lucide-react";
 import { useState } from "react";
 import { useForm, useFormState } from "react-hook-form";
+import { updateCategoryAction } from "../actions/update-category";
+import { useToast } from "@/hooks/use-toast";
+import { SucessToastMessage } from "@/components/sucess-toast-message";
+import { ErrorToastMessage } from "@/components/error-toast-message";
 
 type EditCategoryFormProps = {
   category: Category;
@@ -26,7 +29,7 @@ type EditCategoryFormProps = {
 export function EditCategoryForm({ category }: EditCategoryFormProps) {
   const [inputDisabled, setInputDisabled] = useState(true);
 
-  const form = useForm<CreateCategory>({
+  const form = useForm<UpdateCategory>({
     resolver: zodResolver(createCategorySchema),
     defaultValues: {
       name: category.name,
@@ -36,8 +39,25 @@ export function EditCategoryForm({ category }: EditCategoryFormProps) {
     control: form.control,
   });
 
-  const onSubmit = (values: CreateCategory) => {
-    console.log(values);
+  const { toast } = useToast();
+
+  const onSubmit = async (values: UpdateCategory) => {
+    const response = await updateCategoryAction(category.id, values);
+    if (response.success) {
+      toast({
+        description: <SucessToastMessage message={response.success} />,
+        className: "bg-secondary opacity-90",
+        duration: 2000,
+      });
+      setInputDisabled(true);
+    }
+    if (response.error) {
+      toast({
+        description: <ErrorToastMessage message={response.error} />,
+        className: "bg-secondary opacity-90",
+        duration: 2000,
+      });
+    }
   };
 
   const reset = () => {
@@ -55,7 +75,7 @@ export function EditCategoryForm({ category }: EditCategoryFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input {...field} type="text" disabled={inputDisabled} />
+                  <Input {...field} type="text" disabled={inputDisabled} className="flex-1" />
                 </FormControl>
               </FormItem>
             )}

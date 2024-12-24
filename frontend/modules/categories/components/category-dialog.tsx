@@ -42,7 +42,7 @@ export function CategoryDialog({ closeDropdownMenu }: CategoryDialogProps) {
             Create a new category for your habits
           </DialogDescription>
         </DialogHeader>
-        <CategoryForm />
+        <CategoryForm close={closeDialog} />
       </DialogContent>
     </Dialog>
   );

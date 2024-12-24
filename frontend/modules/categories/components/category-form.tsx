@@ -14,8 +14,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { CreateCategory, createCategorySchema } from "@/types/category";
+import { createCategoryAction } from "../actions/create-category";
+import { useToast } from "@/hooks/use-toast";
+import { SucessToastMessage } from "@/components/sucess-toast-message";
+import { ErrorToastMessage } from "@/components/error-toast-message";
 
-export function CategoryForm() {
+type CategoryFormProps = {
+  close?: () => void;
+};
+
+export function CategoryForm({ close }: CategoryFormProps) {
+  const { toast } = useToast();
+
   const form = useForm<CreateCategory>({
     resolver: zodResolver(createCategorySchema),
     defaultValues: {
@@ -23,7 +33,24 @@ export function CategoryForm() {
     },
   });
 
-  const onSubmit = async (values: CreateCategory) => {};
+  const onSubmit = async (values: CreateCategory) => {
+    const response = await createCategoryAction(values);
+    if (response.success) {
+      toast({
+        description: <SucessToastMessage message={response.success} />,
+        className: "bg-secondary opacity-90",
+        duration: 2000,
+      });
+      close?.();
+    }
+    if (response.error) {
+      toast({
+        description: <ErrorToastMessage message={response.error} />,
+        className: "bg-secondary opacity-90",
+        duration: 2000,
+      });
+    }
+  };
 
   return (
     <div>
