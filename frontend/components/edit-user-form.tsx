@@ -20,21 +20,21 @@ import { SucessToastMessage } from "./sucess-toast-message";
 import { ErrorToastMessage } from "./error-toast-message";
 
 type EditUserFormProps = {
-  // defaultValues: UpdateUser;
+  defaultValues: UpdateUser;
   onSuccess?: () => void;
   onError?: () => void;
 };
 
 export function EditUserForm({
-  // defaultValues,
+  defaultValues,
   onSuccess,
   onError,
 }: EditUserFormProps) {
   const form = useForm<UpdateUser & ActionReponse>({
     resolver: zodResolver(updateUserSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
+      firstName: defaultValues.firstName,
+      lastName: defaultValues.lastName
     },
   });
 
@@ -107,12 +107,7 @@ export function EditUserForm({
           />
         </div>
         <div className="flex justify-end">
-          <div className="flex gap-2">
-            <Button variant="outline" type="button">
-              Cancel
-            </Button>
-            <Button type="submit">Update</Button>
-          </div>
+          <Button type="submit">Update</Button>
         </div>
       </form>
     </Form>
