@@ -5,7 +5,7 @@ import { UpdateUser } from "@/types/user";
 import { revalidateTag } from "next/cache";
 
 export async function updateUserAction(values: UpdateUser) {
-  const { response, error } = await apiClient.PUT("/api/account/update-names", {
+  const { error } = await apiClient.PUT("/api/account/update-names", {
     body: {
       firstName: values.firstName,
       lastName: values.lastName,
@@ -13,10 +13,10 @@ export async function updateUserAction(values: UpdateUser) {
   });
 
   if (error) {
-    return { error: "sss" };
+    return { error: error.title };
   }
 
   revalidateTag("user-info");
 
-  return { success: "user updated!" };
+  return { success: "Your account updated!" };
 }

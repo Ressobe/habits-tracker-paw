@@ -14,6 +14,10 @@ import { ActionReponse } from "@/types/server";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFormState } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import { updatePasswordAction } from "@/actions/update-password";
+import { SucessToastMessage } from "./sucess-toast-message";
+import { ErrorToastMessage } from "./error-toast-message";
+import { useToast } from "@/hooks/use-toast";
 
 export function UpdatePasswordForm() {
   const form = useForm<NewPassword & ActionReponse>({
@@ -25,12 +29,28 @@ export function UpdatePasswordForm() {
     },
   });
 
+  const { toast } = useToast();
+
   const { isSubmitting } = useFormState({
     control: form.control,
   });
 
-  const onSubmit = (values: NewPassword) => {
-    console.log(values);
+  const onSubmit = async (values: NewPassword) => {
+    const response = await updatePasswordAction(values);
+    if (response.success) {
+      toast({
+        description: <SucessToastMessage message={response.success} />,
+        className: "bg-secondary opacity-90",
+        duration: 2000,
+      });
+    }
+    if (response.error) {
+      toast({
+        description: <ErrorToastMessage message={response.error} />,
+        className: "bg-secondary opacity-90",
+        duration: 2000,
+      });
+    }
   };
 
   return (
@@ -92,10 +112,7 @@ export function UpdatePasswordForm() {
         />
 
         <div className="flex justify-end">
-          <div className="flex gap-2">
-            <Button variant="outline">Cancel</Button>
-            <Button type="submit">Update</Button>
-          </div>
+          <Button type="submit">Update</Button>
         </div>
       </form>
     </Form>

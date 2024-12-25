@@ -15,13 +15,13 @@ import {
 import { Home, Key, Settings2, Tag, Trees, UserPen } from "lucide-react"
 import { NavUser } from "./nav-user"
 import { User } from "@/types/user"
-import { SettingsDialog } from "./settings-dialog2";
+import { SettingsDialog } from "./settings-dialog";
 import { HabitSheet } from "@/modules/habits/components/habit-sheet";
 import { CategoryDialog } from "@/modules/categories/components/category-dialog";
 import { EditUserForm } from "./edit-user-form";
-import { NewPasswordForm } from "./auth/new-password-form";
 import { Category } from "@/types/category";
 import { CategoriesList } from "@/modules/categories/components/categories-list";
+import { UpdatePasswordForm } from "./update-password-form";
 
 type AppSidebarProps = {
   user: User;
@@ -29,13 +29,11 @@ type AppSidebarProps = {
 };
 
 export function AppSidebar({ user, categories }: AppSidebarProps) {
-
   const data = [
-    { name: "account", icon: <UserPen />, component: <EditUserForm /> },
+    { name: "account", icon: <UserPen />, component: <EditUserForm defaultValues={user} /> },
     { name: "categories", icon: <Tag />, component: <CategoriesList categories={categories} /> },
-    { name: "password", icon: <Key />, component: <NewPasswordForm /> },
+    { name: "password", icon: <Key />, component: <UpdatePasswordForm /> },
   ];
-
 
   return (
     <Sidebar>

@@ -1,111 +1,132 @@
+'use client';
+
+import { ReactNode, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+  Settings,
+} from "lucide-react";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Settings } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { EditUserForm } from "./edit-user-form";
-import { Separator } from "@/components/ui/separator";
-import { UpdatePasswordForm } from "./update-password-form";
-import { EditCategoryForm } from "@/modules/categories/components/edit-category-form";
-import { CategoryItem } from "@/modules/categories/components/category-item";
-import { ScrollArea } from "./ui/scroll-area";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+} from "@/components/ui/sidebar";
+import { capitalize } from "@/lib/utils";
 
-export function SettingsDialog() {
+
+type Tab = {
+  name: string;
+  icon: ReactNode;
+  component: ReactNode;
+}
+
+type SettingsDialogProps = {
+  data: Tab[];
+};
+
+export function SettingsDialog({ data }: SettingsDialogProps) {
+  const [open, setOpen] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const activeView = searchParams.get("view") || data[0].name;
+
+  const updateView = (viewName: string) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("view", viewName);
+    router.push(`?${params.toString()}`);
+  };
+
+  const renderContent = (viewName: string) => {
+    const view = data.find(item => item.name === viewName);
+    if (!view) return null;
+    return (
+      <div className="flex flex-col gap-4 p-4">
+        <h2 className="text-2xl font-semibold">{capitalize(view?.name)}</h2>
+        {view.component}
+      </div>
+    );
+  };
+
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline">
-          <Settings /> Settings
-        </Button>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger className="flex items-center gap-x-2" asChild>
+        <SidebarMenuButton                >
+          <Settings className="h-4 w-4" />
+          <span>Settings</span>
+        </SidebarMenuButton>
       </DialogTrigger>
-      <DialogContent className="h-[450px] flex flex-col">
-        <DialogHeader className="h-fit">
-          <DialogTitle>Settings</DialogTitle>
-          <DialogDescription>Settings for your account</DialogDescription>
-        </DialogHeader>
-        <Tabs
-          defaultValue="account"
-          className="h-full flex items-start justify-start gap-12"
-        >
-          <TabsList
-            aria-orientation="vertical"
-            className="h-fit flex flex-col items-start justify-start bg-white w-fit"
-          >
-            <TabsTrigger value="account" className="w-full">
-              Account
-            </TabsTrigger>
-            <TabsTrigger value="password" className="w-full">
-              Password
-            </TabsTrigger>
-            <TabsTrigger value="categories" className="w-full">
-              Categories
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent value="account" className="w-full h-full">
-            <div className="pb-4">
-              <h2 className="font-bold text-md">Edit your account</h2>
-              <span className="text-muted-foreground text-sm">
-                Change your first name and last name
-              </span>
+      <DialogContent className="overflow-hidden p-0 md:max-h-[500px] md:max-w-[700px] lg:max-w-[800px]">
+        <DialogTitle className="sr-only">Settings</DialogTitle>
+        <DialogDescription className="sr-only">
+          Customize your settings here.
+        </DialogDescription>
+        <SidebarProvider className="items-start">
+          <Sidebar collapsible="none" className="hidden md:flex">
+            <SidebarContent>
+              <SidebarGroup>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {data.map((item) => (
+                      <SidebarMenuItem key={item.name}>
+                        <SidebarMenuButton
+                          asChild
+                          isActive={item.name === activeView}
+                        >
+                          <button
+                            onClick={() => updateView(item.name)}
+                            className="w-full flex items-center gap-2 px-2 py-1"
+                          >
+                            {item.icon}
+                            <span>{capitalize(item.name)}</span>
+                          </button>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            </SidebarContent>
+          </Sidebar>
+          <main className="flex h-[480px] flex-1 flex-col overflow-hidden">
+            <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+              <Breadcrumb>
+                <BreadcrumbList>
+                  <BreadcrumbItem className="hidden md:block">
+                    Settings
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator className="hidden md:block" />
+                  <BreadcrumbItem>
+                    <BreadcrumbPage>{capitalize(activeView)}</BreadcrumbPage>
+                  </BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
+            </header>
+            <div className="flex-1 overflow-y-auto">
+              {renderContent(activeView)}
             </div>
-            <EditUserForm
-              defaultValues={{
-                lastName: "Sobina",
-                firstName: "Bartek",
-              }}
-            />
-          </TabsContent>
-          <TabsContent value="password" className="w-full">
-            <div className="pb-4">
-              <h2 className="font-bold text-md">Update your password</h2>
-              <span className="text-muted-foreground text-sm">
-                Type your old password and change it
-              </span>
-            </div>
-            <UpdatePasswordForm />
-          </TabsContent>
-          <TabsContent value="categories">
-            <h2 className="font-bold text-lg pb-4">Your categories</h2>
-            <ScrollArea className="h-80">
-              <ul className="flex flex-col gap-6">
-                <CategoryItem
-                  category={{ id: "dkdk", name: "CategoryItem1" }}
-                />
-                <CategoryItem
-                  category={{ id: "dkdk", name: "CategoryItem2" }}
-                />
-                <CategoryItem
-                  category={{ id: "dkdk", name: "CategoryItem3" }}
-                />
-                <CategoryItem
-                  category={{ id: "dkdk", name: "CategoryItem4" }}
-                />
-                <CategoryItem
-                  category={{ id: "dkdk", name: "CategoryItem4" }}
-                />
-                <CategoryItem
-                  category={{ id: "dkdk", name: "CategoryItem4" }}
-                />
-                <CategoryItem
-                  category={{ id: "dkdk", name: "CategoryItem4" }}
-                />
-                <CategoryItem
-                  category={{ id: "dkdk", name: "CategoryItem4" }}
-                />
-                <CategoryItem
-                  category={{ id: "dkdk", name: "CategoryItem4" }}
-                />
-              </ul>
-            </ScrollArea>
-          </TabsContent>
-        </Tabs>
+          </main>
+        </SidebarProvider>
       </DialogContent>
     </Dialog>
   );
 }
+
+export default SettingsDialog;

@@ -13,7 +13,7 @@ export async function loginAction(values: Login) {
   });
 
   if (error) {
-    return { error: `${error}` };
+    return { error: error.message };
   }
 
   if (data?.token) {
