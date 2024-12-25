@@ -13,7 +13,8 @@ import { Habit } from "@/types/habit";
 import IconMenu from "@/components/icon-menu";
 import { ResponsiveDialog } from "@/components/responsive-dialog";
 import { HabitForm } from "./habit-form";
-import { DeleteHabitForm } from "./delete-habit-form";
+import { ResponsiveAlertDialog } from "@/components/responsive-alert-dialog";
+import { deleteHabitAction } from "../actions/delete-habit";
 
 type HabitDropdownMenuProps = {
   habit: Habit;
@@ -35,13 +36,12 @@ export function HabitDropdownMenu({ habit }: HabitDropdownMenuProps) {
           onSuccess={() => setIsEditOpen(false)}
         />
       </ResponsiveDialog>
-      <ResponsiveDialog
+      <ResponsiveAlertDialog
         isOpen={isDelete}
         setIsOpen={setIsDeleteOpen}
-        title="Delete habit"
-      >
-        <DeleteHabitForm habitId={habit.id} />
-      </ResponsiveDialog>
+        onCancel={() => setIsDeleteOpen(false)}
+        handleContinue={() => deleteHabitAction(habit.id)}
+      />
       <DropdownMenu>
         <DropdownMenuTrigger>
           <MoreVertical className="w-4 h-4" />
