@@ -27,4 +27,17 @@ public static class HabitsMapper
       Category = habit.Category?.ToCategoryDto()
     };
   }
+  public static HabitDetailedDto ToHabitDetailedDto(this Habit habit)
+  {
+    return new HabitDetailedDto
+    {
+      Id = habit.Id,
+      Name = habit.Name,
+      Description = habit.Description,
+      Priority = habit.Priority,
+      CreatedAt = habit.CreatedAt,
+      Category = habit.Category?.ToCategoryDto(),
+      Realizations = habit.Realizations.Select(r => r.ToRealizationDto()).ToList()
+    };
+  }
 }

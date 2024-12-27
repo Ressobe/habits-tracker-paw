@@ -11,6 +11,8 @@ namespace backend.Controllers;
 [ApiController]
 [Route("api/habits")]
 [Authorize]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 public class HabitsController : ControllerBase
 {
   private readonly IHabitsService _habitsService;
@@ -28,8 +30,6 @@ public class HabitsController : ControllerBase
   [AuthorizeUser]
   [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
   [ProducesResponseType(StatusCodes.Status400BadRequest)]
-  [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-  [ProducesResponseType(StatusCodes.Status500InternalServerError)]
   public async Task<IActionResult> CreateHabit([FromBody] CreateHabitDto createHabitDto)
   {
     if (!ModelState.IsValid) {
@@ -58,14 +58,36 @@ public class HabitsController : ControllerBase
   [AuthorizeUser]
   [ProducesResponseType(typeof(HabitDto), StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status400BadRequest)]
-  [ProducesResponseType(StatusCodes.Status401Unauthorized)]
   [ProducesResponseType(StatusCodes.Status404NotFound)]
-  [ProducesResponseType(StatusCodes.Status500InternalServerError)]
   public async Task<IActionResult> GetById([FromRoute] Guid id)
   {
     var userId = HttpContext.Items["UserId"] as string;
     try {
       var habit = await _habitsService.GetHabitByIdAsync(id, userId);
+      return Ok(habit);
+    }
+    catch (HabitNotFoundException ex) {
+      return NotFound(new { message = ex.Message });
+    }
+    catch (Exception ex) {
+      return StatusCode(500, ex.Message);
+    }
+  }
+
+  /// <summary>
+  /// Get detailed habit by id with statistics
+  /// </summary>
+  /// <param name="id"></param>
+  /// <returns></returns>
+  [HttpGet("{id:guid}/details")]
+  [AuthorizeUser]
+  [ProducesResponseType(typeof(HabitDetailedDto), StatusCodes.Status200OK)]
+  [ProducesResponseType(StatusCodes.Status404NotFound)]
+  public async Task<IActionResult> GetDetailsById([FromRoute] Guid id)
+  {
+    var userId = HttpContext.Items["UserId"] as string;
+    try {
+      var habit = await _habitsService.GetHabitDetailedByIdAsync(id, userId);
       return Ok(habit);
     }
     catch (HabitNotFoundException ex) {
@@ -84,8 +106,6 @@ public class HabitsController : ControllerBase
   [AuthorizeUser]
   [ProducesResponseType(typeof(List<HabitDto>), StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status400BadRequest)]
-  [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-  [ProducesResponseType(StatusCodes.Status500InternalServerError)]
   public async Task<IActionResult> GetAll()
   {
     var userId = HttpContext.Items["UserId"] as string;
@@ -108,9 +128,7 @@ public class HabitsController : ControllerBase
   [AuthorizeUser]
   [ProducesResponseType(typeof(Guid),StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status400BadRequest)]
-  [ProducesResponseType(StatusCodes.Status401Unauthorized)]
   [ProducesResponseType(StatusCodes.Status404NotFound)]
-  [ProducesResponseType(StatusCodes.Status500InternalServerError)]
   public async Task<IActionResult> UpdateHabit([FromRoute] Guid id, [FromBody] UpdateHabitDto updateHabitDto)
   {
     if (!ModelState.IsValid) {
@@ -141,9 +159,7 @@ public class HabitsController : ControllerBase
   [AuthorizeUser]
   [ProducesResponseType(StatusCodes.Status204NoContent)]
   [ProducesResponseType(StatusCodes.Status400BadRequest)]
-  [ProducesResponseType(StatusCodes.Status401Unauthorized)]
   [ProducesResponseType(StatusCodes.Status404NotFound)]
-  [ProducesResponseType(StatusCodes.Status500InternalServerError)]
   public async Task<IActionResult> DeleteHabit([FromRoute] Guid id)
   {
     var userId = HttpContext.Items["UserId"] as string;

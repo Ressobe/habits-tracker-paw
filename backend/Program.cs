@@ -88,9 +88,11 @@ builder.Services.AddAuthentication(options => {
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IHabitsService, HabitsService>();
 builder.Services.AddScoped<ICategoriesService, CategoriesService>();
+builder.Services.AddScoped<IRealizationsService, RealizationsService>();
 
 builder.Services.AddScoped<IHabitsRepository, HabitsRepository>();
 builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
+builder.Services.AddScoped<IRealizationsRepository, RealizationsRepository>();
 
 var app = builder.Build();
 

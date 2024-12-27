@@ -57,6 +57,52 @@ public class HabitsService : IHabitsService
     return habit.ToHabitDto();
   }
 
+  public async Task<HabitDetailedDto> GetHabitDetailedByIdAsync(Guid id, string userId)
+  {
+    var habit = await _habitRepo.GetDetailedByIdAsync(id, userId);
+    if (habit is null) {
+      throw new HabitNotFoundException();
+    }
+    var habitDetailed = habit.ToHabitDetailedDto();
+
+    habitDetailed.Total = habit.Realizations.Count;
+
+    var dateNow = DateTime.UtcNow;
+    habitDetailed.TotalDays = (dateNow - habit.CreatedAt).Days + 1;
+
+    Dictionary<DateTime, int> completions = new Dictionary<DateTime, int>();
+    foreach (var realization in habit.Realizations) {
+      if (completions.ContainsKey(realization.Date.Date)) {
+        completions[realization.Date.Date] += 1;
+      }
+      else {
+        completions.Add(realization.Date.Date, 1);
+      }
+    }
+    habitDetailed.CompletedDays = completions.Count;
+    habitDetailed.FailedDays = habitDetailed.TotalDays - habitDetailed.CompletedDays;
+
+    int countStreak = 0;
+    var startDate = dateNow.AddDays(-1).Date;
+    var endDate = habitDetailed.CreatedAt.Date;
+    while (startDate != endDate) {
+      if (completions.ContainsKey(startDate)) {
+        countStreak += 1;
+        startDate = startDate.AddDays(-1);
+      }
+      else { break;}
+    }
+    if (completions.ContainsKey(dateNow.Date)) {
+      habitDetailed.IsTodayDone = true;
+      habitDetailed.StreakDays = countStreak + 1;
+    }
+    else {
+      habitDetailed.IsTodayDone = false;
+      habitDetailed.StreakDays = countStreak;
+    }
+    return habitDetailed;
+  }
+
   public async Task<Guid> UpdateHabitAsync(Guid id, UpdateHabitDto updateHabitDto, string userId)
   {
     var habit = await _habitRepo.GetByIdAsync(id, userId);
