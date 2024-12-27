@@ -34,6 +34,15 @@ public class HabitsRepository(ApplicationDBContext context) : IHabitsRepository
       .Include(h => h.Category)
       .FirstOrDefaultAsync(h => h.Id == id && h.CreatedById == userId);
   }
+
+  public async Task<Habit?> GetDetailedByIdAsync(Guid id, string userId)
+  {
+    return await _context.Habits
+      .Include(h => h.Category)
+      .Include(h => h.Realizations)
+      .FirstOrDefaultAsync(h => h.Id == id && h.CreatedById == userId);
+  }
+
   public async Task<Guid> UpdateAsync(Habit habit)
   {
     _context.Entry(habit).State = EntityState.Modified;
