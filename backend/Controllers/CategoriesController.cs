@@ -10,6 +10,8 @@ namespace backend.Controllers;
 [Route("api/categories")]
 [ApiController]
 [Authorize]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 public class CategoriesController(ICategoriesService categoriesService) : ControllerBase
 {
   private readonly ICategoriesService _categoriesService = categoriesService;
@@ -23,8 +25,6 @@ public class CategoriesController(ICategoriesService categoriesService) : Contro
   [AuthorizeUser]
   [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
   [ProducesResponseType(StatusCodes.Status400BadRequest)]
-  [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-  [ProducesResponseType(StatusCodes.Status500InternalServerError)]
   public async Task<ActionResult> CreateCategory([FromBody] CreateCategoryDto toCreateCategory)
   {
     if (!ModelState.IsValid) {
@@ -47,8 +47,6 @@ public class CategoriesController(ICategoriesService categoriesService) : Contro
   [HttpGet]
   [AuthorizeUser]
   [ProducesResponseType(typeof(List<CategoryDto>), StatusCodes.Status200OK)]
-  [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-  [ProducesResponseType(StatusCodes.Status500InternalServerError)]
   public async Task<IActionResult> GetAll()
   {
     var userId = HttpContext.Items["UserId"] as string;
@@ -71,9 +69,7 @@ public class CategoriesController(ICategoriesService categoriesService) : Contro
   [AuthorizeUser]
   [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status400BadRequest)]
-  [ProducesResponseType(StatusCodes.Status401Unauthorized)]
   [ProducesResponseType(StatusCodes.Status404NotFound)]
-  [ProducesResponseType(StatusCodes.Status500InternalServerError)]
   public async Task<IActionResult> UpdateCategory([FromRoute] Guid id, [FromBody] UpdateCategoryDto toUpdateCategory)
   {
     if (!ModelState.IsValid) {
@@ -100,9 +96,7 @@ public class CategoriesController(ICategoriesService categoriesService) : Contro
   [HttpDelete("{id:guid}")]
   [AuthorizeUser]
   [ProducesResponseType(StatusCodes.Status204NoContent)]
-  [ProducesResponseType(StatusCodes.Status401Unauthorized)]
   [ProducesResponseType(StatusCodes.Status404NotFound)]
-  [ProducesResponseType(StatusCodes.Status500InternalServerError)]
   public async Task<IActionResult> DeleteCategory([FromRoute] Guid id)
   {
     var userId = HttpContext.Items["UserId"] as string;

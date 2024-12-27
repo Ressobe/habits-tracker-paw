@@ -9,6 +9,8 @@ namespace backend.Controllers;
 [ApiController]
 [Route("api/realizations")]
 [Authorize]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 public class RealizationsController(IRealizationsService realizationsService) : ControllerBase
 {
   private readonly IRealizationsService _realizationsService = realizationsService;
@@ -21,15 +23,12 @@ public class RealizationsController(IRealizationsService realizationsService) : 
   [HttpPost("{habitId:guid}")]
   [AuthorizeUser]
   [ProducesResponseType(StatusCodes.Status204NoContent)]
-  [ProducesResponseType(StatusCodes.Status401Unauthorized)]
   [ProducesResponseType(StatusCodes.Status404NotFound)]
-  [ProducesResponseType(StatusCodes.Status500InternalServerError)]
   public async Task<IActionResult> CreateRealization([FromRoute] Guid habitId)
   {
     var userId = HttpContext.Items["UserId"] as string;
     try {
-      await _realizationsService.CreateRealizationAsync(habitId, userId);
-      return NoContent();
+      return Ok(await _realizationsService.CreateRealizationAsync(habitId, userId));
     }
     catch (HabitNotFoundException ex) {
       return NotFound(new { message = ex.Message });
@@ -40,26 +39,21 @@ public class RealizationsController(IRealizationsService realizationsService) : 
   }
 
   /// <summary>
-  /// Delete realization
+  /// Delete realization by id
   /// </summary>
   /// <param name="habitId"></param>
   /// <param name="realizationId"></param>
   /// <returns></returns>
-  [HttpDelete("{habitId:guid}/{realizationId:guid}")]
+  [HttpDelete("{id:guid}")]
   [AuthorizeUser]
   [ProducesResponseType(StatusCodes.Status204NoContent)]
-  [ProducesResponseType(StatusCodes.Status401Unauthorized)]
   [ProducesResponseType(StatusCodes.Status404NotFound)]
-  [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-  public async Task<IActionResult> DeleteRealization([FromRoute] Guid habitId, [FromRoute] Guid realizationId)
+  public async Task<IActionResult> DeleteRealization([FromRoute] Guid Id)
   {
     var userId = HttpContext.Items["UserId"] as string;
     try {
-      await _realizationsService.DeleteRealizationByIdAsync(habitId, realizationId, userId);
+      await _realizationsService.DeleteRealizationByIdAsync(Id, userId);
       return NoContent();
-    }
-    catch (HabitNotFoundException ex) {
-      return NotFound(new { message = ex.Message });
     }
     catch (RealizationNotFoundException ex) {
       return NotFound(new { message = ex.Message });

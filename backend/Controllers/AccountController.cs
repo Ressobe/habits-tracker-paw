@@ -12,6 +12,8 @@ namespace backend.Controllers
 {
     [Route("api/account")]
     [ApiController]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public class AccountController : ControllerBase
     {
         private readonly UserManager<AppUser> _userManager;
@@ -33,7 +35,6 @@ namespace backend.Controllers
         [HttpPost("register")]
         [ProducesResponseType(typeof(NewUserDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
             try{
@@ -83,7 +84,6 @@ namespace backend.Controllers
         [HttpPost("login")]
         [ProducesResponseType(typeof(NewUserDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
             if (!ModelState.IsValid) {
@@ -117,7 +117,6 @@ namespace backend.Controllers
         [Authorize]
         [AuthorizeUser]
         [ProducesResponseType(typeof(GetMeDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetMe()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -151,8 +150,6 @@ namespace backend.Controllers
         [AuthorizeUser]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
         {
             if (!ModelState.IsValid) {
@@ -190,8 +187,6 @@ namespace backend.Controllers
         [AuthorizeUser]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateNames([FromBody] UpdateNamesDto updateNamesDto)
         {
             if (!ModelState.IsValid) {

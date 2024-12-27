@@ -15,20 +15,16 @@ public class RealizationsRepository(ApplicationDBContext dbContext) : IRealizati
     await _dbContext.SaveChangesAsync();
     return realization;
   }
-
   public async Task DeleteAsync(Realization realization)
   {
     _dbContext.Realizations.Remove(realization);
     await _dbContext.SaveChangesAsync();
   }
-
-    public Task<List<Realization>> GetAllByHabitIdAsync(Guid habitId)
-    {
-        throw new NotImplementedException();
-    }
-
-  public async Task<Realization> GetByIdAsync(Guid id)
+  public async Task<Realization?> GetByIdAsync(Guid id, string userId)
   {
-    return await _dbContext.Realizations.FirstOrDefaultAsync(r => r.Id == id);
+    return await _dbContext.Realizations
+      .Include(r => r.Habit)
+      .FirstOrDefaultAsync(r => r.Id == id && r.Habit.CreatedById == userId);
+    // return await _dbContext.Realizations.FirstOrDefaultAsync(r => r.Id == id);
   }
 }

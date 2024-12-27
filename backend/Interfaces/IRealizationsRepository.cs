@@ -5,7 +5,6 @@ namespace backend.Interfaces;
 public interface IRealizationsRepository
 {
   Task<Realization> CreateAsync(Realization realization);
-  Task<Realization> GetByIdAsync(Guid id);
-  Task<List<Realization>> GetAllByHabitIdAsync(Guid habitId);
+  Task<Realization?> GetByIdAsync(Guid id, string userId);
   Task DeleteAsync(Realization realization);
 }

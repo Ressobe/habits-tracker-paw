@@ -20,14 +20,10 @@ public class RealizationsService(IRealizationsRepository realizationsRepo, IHabi
     await _realizationsRepo.CreateAsync(realization);
     return realization.Id;
   }
-  public async Task DeleteRealizationByIdAsync(Guid habitId, Guid realizationId, string userId)
+  public async Task DeleteRealizationByIdAsync(Guid Id, string userId)
   {
-    var habit =  await _habitsRepo.GetByIdAsync(habitId, userId);
-    if (habit is null) {
-      throw new HabitNotFoundException("Habit not found");
-    }
-    var realization = await _realizationsRepo.GetByIdAsync(realizationId);
-    if (realization is null || realization.HabitId != habitId) {
+    var realization = await _realizationsRepo.GetByIdAsync(Id, userId);
+    if (realization is null) {
       throw new RealizationNotFoundException("Realization not found");
     }
     await _realizationsRepo.DeleteAsync(realization);
