@@ -13,6 +13,11 @@ public class RealizationsController(IRealizationsService realizationsService) : 
 {
   private readonly IRealizationsService _realizationsService = realizationsService;
 
+  /// <summary>
+  /// Create realization
+  /// </summary>
+  /// <param name="habitId"></param>
+  /// <returns></returns>
   [HttpPost("{habitId:guid}")]
   [AuthorizeUser]
   [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -33,8 +38,19 @@ public class RealizationsController(IRealizationsService realizationsService) : 
       return StatusCode(500, ex.Message);
     }
   }
+
+  /// <summary>
+  /// Delete realization
+  /// </summary>
+  /// <param name="habitId"></param>
+  /// <param name="realizationId"></param>
+  /// <returns></returns>
   [HttpDelete("{habitId:guid}/{realizationId:guid}")]
   [AuthorizeUser]
+  [ProducesResponseType(StatusCodes.Status204NoContent)]
+  [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+  [ProducesResponseType(StatusCodes.Status404NotFound)]
+  [ProducesResponseType(StatusCodes.Status500InternalServerError)]
   public async Task<IActionResult> DeleteRealization([FromRoute] Guid habitId, [FromRoute] Guid realizationId)
   {
     var userId = HttpContext.Items["UserId"] as string;

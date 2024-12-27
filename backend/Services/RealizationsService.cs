@@ -10,7 +10,7 @@ public class RealizationsService(IRealizationsRepository realizationsRepo, IHabi
   private readonly IHabitsRepository _habitsRepo = habitsRepo;
   public async Task<Guid> CreateRealizationAsync(Guid habitId, string userId)
   {
-    var habit = _habitsRepo.GetByIdAsync(habitId, userId);
+    var habit = await _habitsRepo.GetByIdAsync(habitId, userId);
     if (habit is null) {
       throw new HabitNotFoundException("Habit not found");
     }
@@ -22,15 +22,12 @@ public class RealizationsService(IRealizationsRepository realizationsRepo, IHabi
   }
   public async Task DeleteRealizationByIdAsync(Guid habitId, Guid realizationId, string userId)
   {
-    var habit = _habitsRepo.GetByIdAsync(habitId, userId);
+    var habit =  await _habitsRepo.GetByIdAsync(habitId, userId);
     if (habit is null) {
       throw new HabitNotFoundException("Habit not found");
     }
     var realization = await _realizationsRepo.GetByIdAsync(realizationId);
-    if (realization is null) {
-      throw new RealizationNotFoundException("Realization not found");
-    }
-    if (realization.HabitId != habitId) {
+    if (realization is null || realization.HabitId != habitId) {
       throw new RealizationNotFoundException("Realization not found");
     }
     await _realizationsRepo.DeleteAsync(realization);

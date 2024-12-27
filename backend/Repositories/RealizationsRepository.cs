@@ -1,16 +1,13 @@
 using backend.Data;
 using backend.Interfaces;
 using backend.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Repositories;
 
-public class RealizationsRepository : IRealizationsRepository
+public class RealizationsRepository(ApplicationDBContext dbContext) : IRealizationsRepository
 {
-  private readonly ApplicationDBContext _dbContext;
-  public RealizationsRepository(ApplicationDBContext dbContext)
-  {
-    _dbContext = dbContext;
-  }
+  private readonly ApplicationDBContext _dbContext = dbContext;
 
   public async Task<Realization> CreateAsync(Realization realization)
   {
@@ -19,23 +16,19 @@ public class RealizationsRepository : IRealizationsRepository
     return realization;
   }
 
-    public Task DeleteAsync(Realization realization)
-    {
-        throw new NotImplementedException();
-    }
+  public async Task DeleteAsync(Realization realization)
+  {
+    _dbContext.Realizations.Remove(realization);
+    await _dbContext.SaveChangesAsync();
+  }
 
     public Task<List<Realization>> GetAllByHabitIdAsync(Guid habitId)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<Realization> GetByIdAsync(Guid id)
+  public async Task<Realization> GetByIdAsync(Guid id)
   {
-    return await _dbContext.Realizations.FindAsync(id);
+    return await _dbContext.Realizations.FirstOrDefaultAsync(r => r.Id == id);
   }
-
-    Task<Realization> IRealizationsRepository.GetByIdAsync(Guid id)
-    {
-        throw new NotImplementedException();
-    }
 }
