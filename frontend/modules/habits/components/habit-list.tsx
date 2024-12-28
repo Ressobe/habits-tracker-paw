@@ -34,10 +34,10 @@ export function HabitList({ habits }: HabitListProps) {
     }
 
     if (statusFilter) {
-      // const isCompleted = statusFilter === "completed";
-      // if (habit.status !== isCompleted) {
-      //   isValid = false;
-      // }
+      const isCompleted = statusFilter === "completed";
+      if (habit.isTodayDone !== isCompleted) {
+        isValid = false;
+      }
     }
 
     return isValid;
