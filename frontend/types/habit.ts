@@ -8,6 +8,7 @@ export const habitSchema = z.object({
   category: categorySchema.optional(),
   priority: z.number(),
   createdAt: z.string(),
+  isTodayDone: z.boolean(),
 });
 export type Habit = z.infer<typeof habitSchema>;
 

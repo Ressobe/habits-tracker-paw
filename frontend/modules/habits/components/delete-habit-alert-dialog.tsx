@@ -18,6 +18,7 @@ import { deleteHabitAction } from "../actions/delete-habit";
 import { useToast } from "@/hooks/use-toast";
 import { SucessToastMessage } from "@/components/sucess-toast-message";
 import { ErrorToastMessage } from "@/components/error-toast-message";
+import { useRouter } from "next/navigation";
 
 type DeleteHabitAlertDialogProps = {
   habitId: string;
@@ -31,6 +32,7 @@ export function DeleteHabitAlertDialog({
   const [open, setOpen] = useState(false);
 
   const { toast } = useToast();
+  const router = useRouter();
 
   const handleContinue = async () => {
     const response = await deleteHabitAction(habitId);
@@ -41,6 +43,7 @@ export function DeleteHabitAlertDialog({
         duration: 2000,
       });
       setOpen(false);
+      router.push('/habits');
     }
     if (response.error) {
       toast({

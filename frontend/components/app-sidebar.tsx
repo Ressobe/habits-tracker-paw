@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Sidebar,
   SidebarContent,
@@ -22,6 +24,8 @@ import { EditUserForm } from "./edit-user-form";
 import { Category } from "@/types/category";
 import { CategoriesList } from "@/modules/categories/components/categories-list";
 import { UpdatePasswordForm } from "./update-password-form";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 type AppSidebarProps = {
   user: User;
@@ -35,6 +39,8 @@ export function AppSidebar({ user, categories }: AppSidebarProps) {
     { name: "password", icon: <Key />, component: <UpdatePasswordForm /> },
   ];
 
+  const pathname = usePathname();
+
   return (
     <Sidebar>
       <SidebarHeader className="flex">
@@ -47,11 +53,11 @@ export function AppSidebar({ user, categories }: AppSidebarProps) {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <a href="">
+                <SidebarMenuButton isActive={pathname.includes("/habits")} asChild>
+                  <Link href="/habits">
                     <Home />
                     <span>Dashboard</span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
 

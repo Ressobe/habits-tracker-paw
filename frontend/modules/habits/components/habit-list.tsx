@@ -1,7 +1,9 @@
 'use client';
+
 import { Habit } from "@/types/habit";
 import { HabitItem } from "./habit-item";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 type HabitListProps = {
   habits: Habit[];
@@ -14,6 +16,7 @@ export function HabitList({ habits }: HabitListProps) {
   const priorityFilter = searchParams.get("priority");
   const statusFilter = searchParams.get("status");
 
+  const pathname = usePathname();
 
   const filteredHabits = habits.filter((habit) => {
     let isValid = true;
@@ -44,7 +47,9 @@ export function HabitList({ habits }: HabitListProps) {
     <ul className="space-y-6">
       {filteredHabits.map((item) => (
         <li key={item.id}>
-          <HabitItem habit={item} />
+          <Link href={`/habits/${item.id}`}>
+            <HabitItem habit={item} selected={pathname === `/habits/${item.id}`} />
+          </Link>
         </li>
       ))}
     </ul>
