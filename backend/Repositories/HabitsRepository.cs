@@ -25,6 +25,7 @@ public class HabitsRepository(ApplicationDBContext context) : IHabitsRepository
   {
     return await _context.Habits
       .Include(h => h.Category)
+      .Include(h => h.Realizations)
       .Where(u => u.CreatedById == userId)
       .ToListAsync();
   }
@@ -32,6 +33,7 @@ public class HabitsRepository(ApplicationDBContext context) : IHabitsRepository
   {
     return await _context.Habits
       .Include(h => h.Category)
+      .Include(h => h.Realizations)
       .FirstOrDefaultAsync(h => h.Id == id && h.CreatedById == userId);
   }
 
