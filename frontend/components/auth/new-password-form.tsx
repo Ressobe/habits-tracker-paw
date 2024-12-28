@@ -13,8 +13,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { CardWrapper } from "@/components/auth/card-wrapper";
-import { FormError } from "@/components/auth/form-error";
-import { FormSucess } from "@/components/auth/form-sucess";
 import { NewPassword, newPasswordSchema } from "@/types/auth";
 import { ActionReponse } from "@/types/server";
 
