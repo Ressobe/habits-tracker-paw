@@ -82,7 +82,7 @@ jobs:
       - build-and-push-backend-image
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Deploy
         uses: kitconcept/docker-stack-deploy@v1.0.1
