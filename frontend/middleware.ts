@@ -12,8 +12,13 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
+  if (isLoggedIn && pathname === "/") {
+    const homeUrl = new URL("/habits", request.url);
+    return NextResponse.redirect(homeUrl);
+  }
+
   if (isLoggedIn && authRoutes.includes(pathname)) {
-    const homeUrl = new URL("/", request.url);
+    const homeUrl = new URL("/habits", request.url);
     return NextResponse.redirect(homeUrl);
   }
 

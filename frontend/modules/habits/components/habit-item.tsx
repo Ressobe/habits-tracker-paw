@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,6 +13,10 @@ import { HabitDropdownMenu } from "./habit-dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { PriorityBadge } from "@/components/priority-badge";
 import { Habit } from "@/types/habit";
+import { markAsCompletedHabitAction } from "../actions/mark-as-completed-habit";
+import { useToast } from "@/hooks/use-toast";
+import { SucessToastMessage } from "@/components/sucess-toast-message";
+import { ErrorToastMessage } from "@/components/error-toast-message";
 
 type HabitItemProps = {
   habit: Habit;
@@ -18,8 +24,29 @@ type HabitItemProps = {
 };
 
 export function HabitItem({ habit, selected }: HabitItemProps) {
+  const { toast } = useToast();
+
+  const onClickComplete = async () => {
+    const response = await markAsCompletedHabitAction(habit.id);
+    if (response.success) {
+      toast({
+        description: <SucessToastMessage message={response.success} />,
+        className: "bg-secondary opacity-90",
+        duration: 2000,
+      });
+    }
+
+    if (response.error) {
+      toast({
+        description: <ErrorToastMessage message={response.error} />,
+        className: "bg-secondary opacity-90",
+        duration: 2000,
+      });
+    }
+  };
+
   return (
-    <Card className={clsx(selected && "bg-secondary")}>
+    <Card className={clsx(selected && "bg-secondary", "transition-all")}>
       <CardHeader className="flex flex-row items-center justify-between">
         <div className="space-y-2">
           <CardTitle>{habit.name}</CardTitle>
@@ -31,7 +58,7 @@ export function HabitItem({ habit, selected }: HabitItemProps) {
         <HabitDropdownMenu habit={habit} />
       </CardHeader>
       <CardContent>
-        <Button variant="secondary"> Mark as completed</Button>
+        <Button disabled={habit.isTodayDone} onClick={onClickComplete}>Complete</Button>
       </CardContent>
     </Card>
   );
