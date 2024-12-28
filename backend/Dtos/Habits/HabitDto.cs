@@ -16,4 +16,6 @@ public class HabitDto
   [Required]
   public DateTime CreatedAt { get; set; }
   public CategoryDto? Category { get; set; }
+  [Required]
+  public bool IsTodayDone { get; set; } = false;
 }

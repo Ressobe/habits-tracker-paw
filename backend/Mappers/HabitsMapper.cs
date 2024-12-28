@@ -17,7 +17,7 @@ public static class HabitsMapper
   }
   public static HabitDto ToHabitDto(this Habit habit)
   {
-    return new HabitDto
+    var habitDto = new HabitDto
     {
       Id = habit.Id,
       Name = habit.Name,
@@ -26,6 +26,14 @@ public static class HabitsMapper
       CreatedAt = habit.CreatedAt,
       Category = habit.Category?.ToCategoryDto()
     };
+    var DateToday = DateTime.UtcNow.Date;
+    foreach (var realization in habit.Realizations) {
+      if (realization.Date.Date == DateToday) {
+        habitDto.IsTodayDone = true;
+        break;
+      }
+    }
+    return habitDto;
   }
   public static HabitDetailedDto ToHabitDetailedDto(this Habit habit)
   {

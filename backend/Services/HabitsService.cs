@@ -70,15 +70,10 @@ public class HabitsService : IHabitsService
     var dateNow = DateTime.UtcNow;
     habitDetailed.TotalDays = (dateNow - habit.CreatedAt).Days + 1;
 
-    Dictionary<DateTime, int> completions = new Dictionary<DateTime, int>();
-    foreach (var realization in habit.Realizations) {
-      if (completions.ContainsKey(realization.Date.Date)) {
-        completions[realization.Date.Date] += 1;
-      }
-      else {
-        completions.Add(realization.Date.Date, 1);
-      }
-    }
+    Dictionary<DateTime, int> completions = habit.Realizations
+      .GroupBy(r => r.Date.Date)
+      .ToDictionary(g => g.Key, g => g.Count());
+
     habitDetailed.CompletedDays = completions.Count;
     habitDetailed.FailedDays = habitDetailed.TotalDays - habitDetailed.CompletedDays;
 
@@ -87,7 +82,7 @@ public class HabitsService : IHabitsService
     var endDate = habitDetailed.CreatedAt.Date;
     while (startDate != endDate) {
       if (completions.ContainsKey(startDate)) {
-        countStreak += 1;
+        countStreak++;
         startDate = startDate.AddDays(-1);
       }
       else { break;}
