@@ -1,0 +1,95 @@
+name: Build and Push Docker Image
+
+on:
+  workflow_run:
+    workflows: ["Backend Tests", "Frontend tests"]
+    types:
+      - completed
+
+jobs:
+  build-and-push-backend-image:
+    runs-on: ubuntu-latest
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0"
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build .NET project
+        run: dotnet build --configuration Release
+
+      - name: Publish .NET application
+        run: dotnet publish -c Release -o ./publish
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: https://ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          dockerfile: ./Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}:backend-latest
+            ghcr.io/${{ github.repository }}:backend-${{ github.sha }}
+
+  build-and-push-frontend-image:
+      runs-on: ubuntu-latest
+      if: >
+        github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.head_branch == 'main'
+
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v4
+
+        - name: Log in to the Container registry
+          uses: docker/login-action@v3
+          with:
+            registry: https://ghcr.io
+            username: ${{ github.actor }}
+            password: ${{ secrets.GITHUB_TOKEN }}
+
+        - name: Build and push Docker image
+          uses: docker/build-push-action@v6
+          with:
+            context: .
+            push: true
+            tags: |
+              ghcr.io/${{ github.repository }}:frontend-latest
+              ghcr.io/${{ github.repository }}:frontend-${{ github.sha }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs:
+      - build-and-push-backend-image
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Deploy
+        uses: kitconcept/docker-stack-deploy@v1.0.1
+        with:
+          registry: "ghcr.io"
+          username: "ressobe"
+          password: ${{ secrets.GHCR_TOKEN }}
+          remote_host: "145.223.97.58"
+          remote_user: "deploy"
+          remote_private_key: ${{ secrets.REMOTE_PRIVATE_KEY }}
+          stack_file: "docker-compose.yaml"
+          stack_name: "habits-tracker"

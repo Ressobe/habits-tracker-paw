@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_USER: habitstracker
+      POSTGRES_PASSWORD: habitstracker
+      POSTGRES_DB: HabitsTracker
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - habits-tracker-network
+
+  api:
+    image: ghcr.io/ressobe/habits-tracker-paw-backend:latest
+    container_name: api
+    restart: always
+    ports:
+      - "5002:5002"
+    depends_on:
+      - postgres
+    networks:
+      - habits-tracker-network
+
+  frontend:
+    image: ghcr.io/ressobe/habits-tracker-paw-frontend:latest
+    container_name: frontend
+    ports:
+      - "80:3000"
+    depends_on:
+      - api
+    networks:
+      - habits-tracker-network
+
+networks:
+  habits-tracker-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
