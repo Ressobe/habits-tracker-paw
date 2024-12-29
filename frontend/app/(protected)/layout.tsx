@@ -7,7 +7,6 @@ import { CategoriesProvider } from "@/providers/categories-provider";
 export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const user = await getUserInfo();
   if (!user) return null;
-
   const categories = await getCategories();
 
   return (

@@ -9,6 +9,7 @@ on:
 jobs:
   build-and-push-backend-image:
     runs-on: ubuntu-latest
+
     if: >
       github.event.workflow_run.conclusion == 'success' &&
       github.event.workflow_run.head_branch == 'main'
@@ -35,7 +36,7 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: https://ghcr.io
-          username: ${{ github.actor }}
+          username: Ressobe
           password: ${{ secrets.GHCR_TOKEN }}
 
       - name: Set up Docker Buildx
@@ -69,21 +70,19 @@ jobs:
           uses: docker/login-action@v3
           with:
             registry: https://ghcr.io
-            username: ${{ github.actor }}
+            username: Ressobe
             password: ${{ secrets.GHCR_TOKEN }}
-            
+
         - name: Set up Docker Buildx
           uses: docker/setup-buildx-action@v3
 
-        - name: Set environment variables
-          run: |
-            echo "NEXT_PUBLIC_API_URL=http://api:5002" >> $GITHUB_ENV
-            
         - name: Build and push Docker image
           uses: docker/build-push-action@v6
           with:
-            context: .
+            context: ./frontend
             dockerfile: ./Dockerfile
+            build-args: |
+              NEXT_PUBLIC_API_URL=http://api:5002
             push: true
             tags: |
               ghcr.io/ressobe/habits-tracker-frontend:latest
@@ -107,5 +106,5 @@ jobs:
           remote_host: "145.223.97.58"
           remote_user: "deploy"
           remote_private_key: ${{ secrets.REMOTE_PRIVATE_KEY }}
-          stack_file: "docker-compose.yaml"
+          stack_file: "docker-stack.yml"
           stack_name: "habits-tracker"

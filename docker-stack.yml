@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: habitstracker
+      POSTGRES_PASSWORD: habitstracker
+      POSTGRES_DB: HabitsTracker
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    depends_on:
+      - traefik
+
+  api:
+    image: ghcr.io/ressobe/habits-tracker-backend:latest
+    ports:
+      - "5002:5002"
+    depends_on:
+      - postgres
+      - traefik
+
+  frontend:
+    image: ghcr.io/ressobe/habits-tracker-frontend:latest
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`145.223.97.58`)"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
+    depends_on:
+      - traefik
+      - api
+
+  traefik:
+    image: traefik:v3.1
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - letsencrypt:/letsencrypt
+
+volumes:
+  postgres_data:
+    driver: local
+  letsencrypt:
+    driver: local
