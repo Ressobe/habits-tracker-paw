@@ -3,7 +3,6 @@
 import { Habit } from "@/types/habit";
 import { HabitItem } from "./habit-item";
 import { usePathname, useSearchParams } from "next/navigation";
-import Link from "next/link";
 
 type HabitListProps = {
   habits: Habit[];
@@ -47,9 +46,9 @@ export function HabitList({ habits }: HabitListProps) {
     <ul className="space-y-6">
       {filteredHabits.map((item) => (
         <li key={item.id}>
-          <Link href={`/habits/${item.id}`}>
-            <HabitItem habit={item} selected={pathname === `/habits/${item.id}`} />
-          </Link>
+          <a href={`/habits/${item.id}`}>
+            <HabitItem key={item.id} habit={item} selected={pathname === `/habits/${item.id}`} />
+          </a>
         </li>
       ))}
     </ul>
