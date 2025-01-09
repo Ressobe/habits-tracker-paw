@@ -21,6 +21,7 @@ type HabitDropdownMenuProps = {
 };
 
 export function HabitDropdownMenu({ habit }: HabitDropdownMenuProps) {
+  const [isDropdownMenuOpen, setIsDropdownOpen] = useState(false);
   const [isEdit, setIsEditOpen] = useState(false);
   const [isDelete, setIsDeleteOpen] = useState(false);
 
@@ -28,7 +29,10 @@ export function HabitDropdownMenu({ habit }: HabitDropdownMenuProps) {
     <>
       <ResponsiveDialog
         isOpen={isEdit}
-        setIsOpen={setIsEditOpen}
+        setIsOpen={(open) => {
+          setIsEditOpen(open);
+          if (!open) setIsDropdownOpen(false);
+        }}
         title="Update habit"
       >
         <HabitForm
@@ -42,7 +46,7 @@ export function HabitDropdownMenu({ habit }: HabitDropdownMenuProps) {
         onCancel={() => setIsDeleteOpen(false)}
         handleContinue={() => deleteHabitAction(habit.id)}
       />
-      <DropdownMenu>
+      <DropdownMenu open={isDropdownMenuOpen} onOpenChange={setIsDropdownOpen}>
         <DropdownMenuTrigger>
           <MoreVertical className="w-4 h-4" />
         </DropdownMenuTrigger>
@@ -55,6 +59,7 @@ export function HabitDropdownMenu({ habit }: HabitDropdownMenuProps) {
             <button
               onClick={() => {
                 setIsEditOpen(true);
+                setIsDropdownOpen(false);
               }}
               className="w-full justify-start flex rounded-md p-2 transition-all duration-75 hover:bg-neutral-100"
             >
@@ -67,6 +72,7 @@ export function HabitDropdownMenu({ habit }: HabitDropdownMenuProps) {
             <button
               onClick={() => {
                 setIsDeleteOpen(true);
+                setIsDropdownOpen(false);
               }}
               className="w-full justify-start flex rounded-md p-2 transition-all duration-75 hover:bg-neutral-100"
             >

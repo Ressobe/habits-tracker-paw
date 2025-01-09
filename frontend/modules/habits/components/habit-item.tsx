@@ -58,7 +58,7 @@ export function HabitItem({ habit, selected }: HabitItemProps) {
         <HabitDropdownMenu habit={habit} />
       </CardHeader>
       <CardContent>
-        <Button disabled={habit.isTodayDone} onClick={onClickComplete}>Complete</Button>
+        <Button disabled={habit.isTodayDone} onClick={(e) => { e.preventDefault(); onClickComplete() }}>Complete</Button>
       </CardContent>
     </Card>
   );

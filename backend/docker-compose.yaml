@@ -7,6 +7,10 @@ services:
       POSTGRES_PASSWORD: habitstracker
       POSTGRES_DB: HabitsTracker
     ports:
-      - 5469:5432
+      - 5432:5432
     volumes:
-     - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+    driver: local

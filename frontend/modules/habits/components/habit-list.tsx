@@ -47,7 +47,7 @@ export function HabitList({ habits }: HabitListProps) {
       {filteredHabits.map((item) => (
         <li key={item.id}>
           <a href={`/habits/${item.id}`}>
-            <HabitItem key={item.id} habit={item} selected={pathname === `/habits/${item.id}`} />
+            <HabitItem habit={item} selected={pathname === `/habits/${item.id}`} />
           </a>
         </li>
       ))}
