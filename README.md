@@ -8,21 +8,19 @@ This project is composed of:
 - **Backend**: Developed with [.NET](https://dotnet.microsoft.com/) and uses PostgreSQL as the database.
 - **Containerization**: Managed with [Docker](https://www.docker.com/) for simplified deployment and environment consistency.
 
----
+
 ## Features
 - Add, update, and delete habits.
 - Track your progress with calendar.
 - View analytics for habit performance.
 - Design for both desktop and mobile devices.
 
----
 
 ## Technologies Used
 - **Frontend**: Next.js, Tailwind CSS, shadcn/ui
 - **Backend**: .NET, PostgreSQL
 - **Containerization**: Docker
 
----
 
 ## Getting Started
 Follow these steps to set up the project locally or run it entirely using Docker.
@@ -41,7 +39,6 @@ git clone https://github.com/your-username/habits-tracker.git
 cd habits-tracker
 ```
 
----
 
 ### Running the Application Locally
 
@@ -77,14 +74,13 @@ To run the project locally, you will need to start the PostgreSQL database in a 
 
 5. Create an .env file in the frontend directory and add the following environment variable:
 ```
-	NEXT_PUBLIC_API_URL="http://localhost:5002"
+NEXT_PUBLIC_API_URL="http://localhost:5002"
 ```
 
 6. Access the application:
    - Frontend: [http://localhost:3000](http://localhost:3000)
    - Backend: [http://localhost:5002](http://localhost:5002)
 
----
 
 ## Folder Structure
 
